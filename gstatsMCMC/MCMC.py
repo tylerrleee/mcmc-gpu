@@ -58,9 +58,9 @@ def fit_variogram(data, coords, roughness_region_mask, maxlag, n_lags=50, sample
                 experimental variogram against the fitted theoretical models.
     """
     if len(data_for_trans)==0:
-        nst_trans = QuantileTransformer(n_quantiles=500, output_distribution="normal",random_state=0,subsample=subsample).fit(data)
+        nst_trans = QuantileTransformer(n_quantiles=500, output_distribution="normal",random_state=152,subsample=subsample).fit(data)
     else:
-        nst_trans = QuantileTransformer(n_quantiles=500, output_distribution="normal",random_state=0,subsample=subsample).fit(data_for_trans)
+        nst_trans = QuantileTransformer(n_quantiles=500, output_distribution="normal",random_state=152,subsample=subsample).fit(data_for_trans)
         
     transformed_data = nst_trans.transform(data)
     
