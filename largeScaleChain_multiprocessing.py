@@ -13,7 +13,7 @@ from pathlib import Path
 import os
 import sys
 
-def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_seeds,n_iters):
+def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_seeds,n_iters,output_path='./Data/output'):
     '''
     function to run multiple large scale chain using multiprocessing
 
@@ -26,12 +26,19 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     initial_beds (list): a list of subglacial topography (each of which are a 2D numpy array) used to initialize each chain
     rng_seeds (list): a list of int used to initialize the random number generator of each chain
     n_iters (int): a list of number of iterations runned for each chain
+    output_path (str): Path to the folder where the user wants to save results
 
     Returns
     -------
     result: a list of results from all the chains runned.
 
     '''
+    base_path = Path(output_path)
+    ls_chain_path = base_path / 'LargeScaleChain'
+    ss_chain_path = base_path / 'SmallScaleChain'
+
+    ls_chain_path.mkdir(parents=True, exist_ok=True)
+    ss_chain_path.mkdir(parents=True, exist_ok=True)
 
     # Clear the console for the progress bars
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -57,6 +64,7 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
         run_param['chain_id'] = i
         run_param['tqdm_position'] = i + 2 # 2 lines for header
         run_param['seed'] = rng_seeds[i]
+        run_param['output_path'] = str(ls_chain_path)
 
         params.append([deepcopy(chain_param),deepcopy(example_RF),deepcopy(run_param)])
 
@@ -104,6 +112,28 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
         plot=param_run['plot'], 
         progress_bar=param_run['progress_bar']
         )
+    
+    # Save results
+    output_path = param_run.get('output_path', './Data/LargeScaleChain')
+    seed = param_run['seed']
+    n_iter = param_run['n_iter']
+
+    # Create seed-specific folder
+    seed_folder = Path(output_path) / f'{str(seed)[:6]}'
+    seed_folder.mkdir(parents=True, exist_ok=True)
+
+    # Unpack results
+    beds, loss_mc, loss_data, loss, steps, resampled_times, blocks_used = result
+
+    # Save all outputs
+    iteration_label = f'{n_iter // 1000}k'
+    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
+    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
+    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
+    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
+    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
+    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
+    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
 
     return result
     
@@ -119,12 +149,19 @@ def smallScaleChain_mp(n_chains,n_workers,smallScaleChain,initial_beds,rng_seeds
     initial_beds (list): a list of subglacial topography (each of which are a 2D numpy array) used to initialize each chain
     rng_seeds (list): a list of int used to initialize the random number generator of each chain
     n_iters (int): a list of number of iterations runned for each chain
+    output_path (str): Path to the folder where the users wants to save results
 
     Returns
     -------
     result: a list of results from all the chains runned.
 
     '''
+    base_path = Path(output_path)
+    ls_chain_path = base_path / 'LargeScaleChain'
+    ss_chain_path = base_path / 'SmallScaleChain'
+
+    ls_chain_path.mkdir(parents=True, exist_ok=True)
+    ss_chain_path.mkdir(parents=True, exist_ok=True)
 
     # Clear the console for the progress bars
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -149,6 +186,7 @@ def smallScaleChain_mp(n_chains,n_workers,smallScaleChain,initial_beds,rng_seeds
         run_param['chain_id'] = i
         run_param['tqdm_position'] = i + 2 # 2 lines for header
         run_param['seed'] = rng_seeds[i]
+        run_param['output_path'] = str(ss_chain_path)
 
         params.append([deepcopy(chain_param),deepcopy(run_param)])
 
@@ -194,6 +232,28 @@ def msc_run_wrapper(param_chain, param_rf, param_run):
         plot=param_run['plot'], 
         progress_bar=param_run['progress_bar']
         )
+    
+    # Save reults
+    output_path = param_run.get('output_path', './Data/SmallScaleChain')
+    seed = param_run['seed']
+    n_iter = param_run['n_iter']
+
+    # Create seed-specific folder
+    seed_folder = Path(output_path) / f'{str(seed)[:6]}'
+    seed_folder.mkdir(parents=True, exist_ok=True)
+
+    # Unpack results
+    beds, loss_mc, loss_data, loss, steps, resampled_times, blocks_used = result
+
+    # Save all outputs
+    iteration_label = f'{n_iter // 1000}k'
+    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
+    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
+    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
+    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
+    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
+    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
+    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
 
     return result
 
@@ -354,6 +414,8 @@ if __name__=='__main__':
         
     n_iters = [n_iter]*n_chains
 
-    result = largeScaleChain_mp(n_chains, n_workers, largeScaleChain, rf1, initial_beds, rng_seeds, n_iters)
+    output_path = './Data/output'
+
+    result = largeScaleChain_mp(n_chains, n_workers, largeScaleChain, rf1, initial_beds, rng_seeds, n_iters, output_path)
     
     #beds, loss_mc, loss_data, loss, steps, resampled_times, blocks_used  = largeScaleChain.run(n_iter=n_iter, RF=rf1, only_save_last_bed=False)
