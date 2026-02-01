@@ -125,43 +125,75 @@ def smallScaleChain_mp(n_chains,n_workers,smallScaleChain,initial_beds,rng_seeds
     result: a list of results from all the chains runned.
 
     '''
+
+    # Clear the console for the progress bars
+    os.system('cls' if os.name == 'nt' else 'clear')
     
     tic = time.time()
     
     params = []
     example_chain = smallScaleChain.__dict__ #retrive parameters from the existing chain
-    run_param = {}
 
     # modify some of the parameters based on the input rng_seeds, initial_beds, and n_iters
     for i in range(n_chains):   
         chain_param = deepcopy(example_chain)
         chain_param['rng_seed'] = rng_seeds[i]
         chain_param['initial_bed'] = initial_beds[i]
+
+        run_param = {}
         run_param['n_iter'] = n_iters[i]
         run_param['only_save_last_bed']=True # some display parameters are fixed.
         run_param['info_per_iter']=1000
         run_param['plot']=False
         run_param['progress_bar']=False
+        run_param['chain_id'] = i
+        run_param['tqdm_position'] = i + 2 # 2 lines for header
+        run_param['seed'] = rng_seeds[i]
+
         params.append([deepcopy(chain_param),deepcopy(run_param)])
+
+    # Print header and reserve space for progress bars
+    print('Running MCMC chains...')
+    print('\n' * (n_chains + 1))
+    sys.stdout.flush() # force output into the terminal
     
     # the multiprocessing step
     with mp.Pool(n_workers) as pool:
         result = pool.starmap(msc_run_wrapper, params)
 
-    for i, r in enumerate(result):
-        beds, loss_mc, loss_data, loss, steps, resampled_times, blocks_used = r
-        #### TODO: code for save data
+    # Move cursor below chain outputs before printing total time
+    print('\n' * (n_chains + 2))
     
     toc = time.time()
-    print(f'{toc-tic} seconds')
+    print(f'Completed in {toc-tic:.2f} seconds')
     
     return result
     
 def msc_run_wrapper(param_chain, param_rf, param_run):
     # a function used to initialize chain by input parameters and run the chains
+
+    # Suppress initialization prints from workers
+    old_stdout = sys.stdout
+    sys.stdout = open(os.devnull, 'w')
     
     chain = MCMC.init_msc_chain_by_instance(param_chain)
-    result = chain.run(n_iter=param_run['n_iter'], only_save_last_bed=param_run['only_save_last_bed'], info_per_iter=param_run['info_per_iter'], plot=param_run['plot'], progress_bar=param_run['progress_bar'])
+
+    # Restore stdout
+    sys.stdout.close()
+    sys.stdout = old_stdout
+
+    # Store positioning info
+    chain.chain_id = param_run.get('chain_id', 'Unknown')
+    chain.tqdm_position = param_run.get('tqdm_position', 0)
+    chain.seed = param_run.get('seed', 'Unknown')
+
+    result = chain.run(
+        n_iter=param_run['n_iter'], 
+        only_save_last_bed=param_run['only_save_last_bed'], 
+        info_per_iter=param_run['info_per_iter'], 
+        plot=param_run['plot'], 
+        progress_bar=param_run['progress_bar']
+        )
 
     return result
 
