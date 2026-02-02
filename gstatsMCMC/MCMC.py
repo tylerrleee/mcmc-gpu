@@ -1691,7 +1691,7 @@ class chain_sgs(chain):
             iterator = range(1,n_iter)
 
             chain_id = getattr(self, 'chain_id', 'Unknown')
-            output_line = getattr(self, 'tqdm_position', 0)
+            output_line = getattr(self, 'tqdm_position', 0) + 2 # Reserve first line for header
             seed = getattr(self, 'seed', 'Unknown')
 
         iter_start_time = time.time()        
@@ -1794,6 +1794,7 @@ class chain_sgs(chain):
                     elapsed = time.time() - iter_start_time
                     iter_per_sec = i / elapsed if elapsed > 0 else 0
                     print(f'Chain {chain_id}: {progress:.1f}% | i: {i} | mc loss: {loss_mc_cache[i]:.3e} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f} | it/s: {iter_per_sec:.2f} | seed: {str(seed)[:6]}', end='')
+                    sys.stdout.flush()
 
             # Calculate acceptance rate for plot
             total_acceptance = (accepted_count / (i + 1)) * 100
