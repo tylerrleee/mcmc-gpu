@@ -19,11 +19,23 @@ from skgstat import models
 from tqdm.auto import tqdm
 from IPython import display
 import math
+import sys
+import time
 
 from . import Topography
 from . import gstatsim_custom as gsim
 from copy import deepcopy
 import numbers
+
+def move_cursor_to_line(line_number):
+    """Move cursor to specific line for updating in place"""
+    sys.stdout.write(f'\033[{line_number};0H')  # Move to line N, column 0
+    sys.stdout.flush()
+
+def clear_line():
+    """Clear the current line"""
+    sys.stdout.write('\033[2K')
+    sys.stdout.flush()
 
 # code adopted from gstatsim_custom by Michael
 def _preprocess(xx, yy, grid, variogram, sim_mask, radius, stencil):
@@ -1209,10 +1221,22 @@ class chain_crf(chain):
         acceptance_rates = []
 
         if progress_bar == True:
-            iterator = tqdm(range(1,n_iter)) 
+            chain_id = getattr(self, 'chain_id', 0)
+            seed = getattr(self, 'seed', 'Unknown')
+            tqdm_position = getattr(self, 'tqdm_position', 0)
+
+            iterator = tqdm(range(1, n_iter),
+                            desc=f'Chain {chain_id} | Seed {seed}',
+                            position=tqdm_position,
+                            leave=True) 
         else:
             iterator = range(1,n_iter)
+
+            chain_id = getattr(self, 'chain_id', 'Unknown')
+            output_line = getattr(self, 'tqdm_position', 0) + 2 # Reserve first line for header
+            seed = getattr(self, 'seed', 'Unknown')
             
+        iter_start_time = time.time()
         #pbar = tqdm(range(1,n_iter))
         for i in iterator:
                         
@@ -1335,14 +1359,22 @@ class chain_crf(chain):
             if progress_bar:
                 # Update tqdm progress bar
                 iterator.set_postfix({
+                    'chain_id'  :   chain_id,
+                    'seed'      :   seed,
                     'mc loss'   :   f'{loss_mc_cache[i]:.3e}',
                     'data loss' :   f'{loss_data_cache[i]:.3e}',
                     'loss'      :   f'{loss_cache[i]:.3e}',
                     'acceptance rate'   :   f'{np.sum(step_cache)/(i+1):.6f}'
                 })
             else:
-                if i%info_per_iter == 0:
-                    print(f'i: {i} mc loss: {loss_mc_cache[i]:.3e} data loss: {loss_data_cache[i]:.3e} loss: {loss_cache[i]:.3e} acceptance rate: {np.sum(step_cache)/(i+1)}')
+                if i%info_per_iter == 0 or i == 1 or i == n_iter - 1:
+                    move_cursor_to_line(output_line)
+                    clear_line()
+                    progress = i / (n_iter - 1) * 100
+                    elapsed = time.time() - iter_start_time
+                    iter_per_sec = i / elapsed if elapsed > 0 else 0
+                    print(f'Chain {chain_id}: {progress:.1f}% | i: {i} | mc loss: {loss_mc_cache[i]:.3e} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f} | it/s: {iter_per_sec:.2f} | seed: {str(seed)[:6]}', end='')
+                    sys.stdout.flush()
 
             # Calculate acceptance rate for plot
             total_acceptance = (accepted_count / (i + 1)) * 100
@@ -1647,10 +1679,22 @@ class chain_sgs(chain):
         acceptance_rates = []
 
         if progress_bar == True:
-            iterator = tqdm(range(1,n_iter)) 
+            chain_id = getattr(self, 'chain_id', 0)
+            seed = getattr(self, 'seed', 'Unknown')
+            tqdm_position = getattr(self, 'tqdm_position')
+
+            iterator = tqdm(range(1,n_iter),
+                            desc=f'Chain {chain_id} | Seed {seed}',
+                            position=tqdm_position,
+                            leave=True) 
         else:
             iterator = range(1,n_iter)
-        
+
+            chain_id = getattr(self, 'chain_id', 'Unknown')
+            output_line = getattr(self, 'tqdm_position', 0) + 2 # Reserve first line for header
+            seed = getattr(self, 'seed', 'Unknown')
+
+        iter_start_time = time.time()        
         for i in range(n_iter):
     
             while True:
@@ -1735,14 +1779,22 @@ class chain_sgs(chain):
             if progress_bar:
                 # Update tqdm progress bar
                 iterator.set_postfix({
+                    'chain_id'  :   chain_id,
+                    'seed'      :   seed,
                     'mc loss'   :   f'{loss_mc_cache[i]:.3e}',
                     'data loss' :   f'{loss_data_cache[i]:.3e}',
                     'loss'      :   f'{loss_cache[i]:.3e}',
                     'acceptance rate'   :   f'{np.sum(step_cache)/(i+1):.6f}'
                 })
             else:
-                if i%info_per_iter == 0:
-                    print(f'i: {i} mc loss: {loss_mc_cache[i]:.3e} loss: {loss_cache[i]:.3e} acceptance rate: {np.sum(step_cache)/(i+1)}')
+                if i%info_per_iter == 0 or i == 1 or i == n_iter - 1:
+                    move_cursor_to_line(output_line)
+                    clear_line()
+                    progress = i / (n_iter - 1) * 100
+                    elapsed = time.time() - iter_start_time
+                    iter_per_sec = i / elapsed if elapsed > 0 else 0
+                    print(f'Chain {chain_id}: {progress:.1f}% | i: {i} | mc loss: {loss_mc_cache[i]:.3e} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f} | it/s: {iter_per_sec:.2f} | seed: {str(seed)[:6]}', end='')
+                    sys.stdout.flush()
 
             # Calculate acceptance rate for plot
             total_acceptance = (accepted_count / (i + 1)) * 100
