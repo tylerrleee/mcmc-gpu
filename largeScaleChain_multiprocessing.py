@@ -141,31 +141,26 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
         bed_file = 'bed_'+str(iter_count)+'k.txt'
         
         # Load the most recent bed file
-        most_recent_bed = np.loadtxt(seed_folder / bed_file)
+        most_recent_bed = np.load(seed_folder / f'bed_{iter_count}k.npy')
         
         # Update the chain's initial bed
         chain.initial_bed = most_recent_bed
         
         # Load all previous result files
+        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
         previous_results = {
-            'loss_mc': np.loadtxt(seed_folder / f'loss_mc_{iter_count}k.txt'),
-            'loss_data': np.loadtxt(seed_folder / f'loss_data_{iter_count}k.txt'),
-            'loss': np.loadtxt(seed_folder / f'loss_{iter_count}k.txt'),
-            'steps': np.loadtxt(seed_folder / f'steps_{iter_count}k.txt'),
-            'resampled_times': np.loadtxt(seed_folder / f'resampled_times_{iter_count}k.txt'),
-            'blocks_used': np.loadtxt(seed_folder / f'blocks_used_{iter_count}k.txt')
+            'loss_mc' : results_data['loss_mc'],
+            'loss_data' : results_data['loss_data'],
+            'loss' : results_data['loss'],
+            'steps' : results_data['steps'],
+            'resampled_times' : results_data['resampled_times'],
+            'blocks_used' : results_data['blocks_used']
         }
         
         # Mark files for deletion
         files_to_delete = [
-            #seed_folder / f'bed_{iter_count}k.txt',
-            seed_folder / 'current_iter.txt',
-            seed_folder / f'loss_mc_{iter_count}k.txt',
-            seed_folder / f'loss_data_{iter_count}k.txt',
-            seed_folder / f'loss_{iter_count}k.txt',
-            seed_folder / f'steps_{iter_count}k.txt',
-            seed_folder / f'resampled_times_{iter_count}k.txt',
-            seed_folder / f'blocks_used_{iter_count}k.txt'
+            seed_folder / f'results_{iter_count}k.npz',
+            seed_folder / 'current_iter.txt'
         ]
         
         with open(seed_folder / 'RNGState_RandField.txt', "r") as file: 
@@ -176,7 +171,7 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     # Store positioning info
     chain.chain_id = param_run.get('chain_id', 'Unknown')
     chain.tqdm_position = param_run.get('tqdm_position', 0)
-    #chain.seed = param_run.get('seed', 'Unknown')
+    chain.seed = param_run.get('seed', 'Unknown')
 
     # Run the chain
     result = chain.run(
@@ -212,13 +207,17 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     iteration_label = f'{cumulative_iters // 1000}k'
     
     # Save all outputs with updated iteration label
-    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
-    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
-    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
-    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
-    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
-    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
-    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
+    np.save(seed_folder / f'bed_{iteration_label}.npy', beds)
+
+    np.savez_compressed(
+        seed_folder / f'results_{iteration_label}.npz',
+        loss_mc=loss_mc,
+        loss_data=loss_data,
+        loss=loss,
+        steps=steps,
+        resampled_times=resampled_times,
+        blocks_used=blocks_used
+    )
     
     # Delete old files after successfully saving new ones
     for file_path in files_to_delete:
@@ -348,30 +347,26 @@ def msc_run_wrapper(param_chain, param_run):
         cumulative_iters = iter_count * 1000 # Convert back to actual iterations
 
         # Load the most recent bed file
-        most_recent_bed = np.loadtxt(bed_file)
+        most_recent_bed = np.load(seed_folder / f'bed_{iter_count}k.npy')
 
         # Update the chain's intiial bed
         chain.initial_bed = most_recent_bed
 
         # Load all previous result files
+        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
         previous_results = {
-            'loss_mc': np.loadtxt(seed_folder / f'loss_mc_{iter_count}k.txt'),
-            'loss_data': np.loadtxt(seed_folder / f'loss_data_{iter_count}k.txt'),
-            'loss': np.loadtxt(seed_folder / f'loss_{iter_count}k.txt'),
-            'steps': np.loadtxt(seed_folder / f'steps_{iter_count}k.txt'),
-            'resampled_times': np.loadtxt(seed_folder / f'resampled_times_{iter_count}k.txt'),
-            'blocks_used': np.loadtxt(seed_folder / f'blocks_used_{iter_count}k.txt')
+            'loss_mc' : results_data['loss_mc'],
+            'loss_data' : results_data['loss_data'],
+            'loss' : results_data['loss'],
+            'steps' : results_data['steps'],
+            'resampled_times' : results_data['resampled_times'],
+            'blocks_used' : results_data['blocks_used']
         }
 
         # Mark files for deletion
         files_to_delete = [
-            seed_folder / f'bed_{iter_count}k.txt',
-            seed_folder / f'loss_mc_{iter_count}k.txt',
-            seed_folder / f'loss_data_{iter_count}k.txt',
-            seed_folder / f'loss_{iter_count}k.txt',
-            seed_folder / f'steps_{iter_count}k.txt',
-            seed_folder / f'resampled_times_{iter_count}k.txt',
-            seed_folder / f'blocks_used_{iter_count}k.txt'
+            seed_folder / f'results_{iter_count}k.npz',
+            seed_folder / 'current_iter.txt'
         ]
         
         with open(seed_folder / 'RNGState_chain.txt', "r") as file: 
@@ -412,13 +407,17 @@ def msc_run_wrapper(param_chain, param_run):
     iteration_label = f'{cumulative_iters // 1000}k'
 
     # Save all outputs with updated iteration label
-    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
-    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
-    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
-    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
-    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
-    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
-    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
+    np.save(seed_folder / f'bed_{iteration_label}.npy', beds)
+
+    np.savez_compressed(
+        seed_folder / f'results_{iteration_label}.npz',
+        loss_mc=loss_mc,
+        loss_data=loss_data,
+        loss=loss,
+        steps=steps,
+        resampled_times=resampled_times,
+        blocks_used=blocks_used
+    )
 
     # Delete old files after successfully saving new ones
     for file_path in files_to_delete:
