@@ -1,9 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from gstatsMCMC import Topography
 from gstatsMCMC import MCMC
-import gstatsim as gs
 from sklearn.preprocessing import QuantileTransformer
 import skgstat as skg
 from copy import deepcopy
@@ -12,9 +10,9 @@ import multiprocessing as mp
 from pathlib import Path
 import os
 import sys
-import scipy as sp
 import json
 import psutil
+import config
 
 def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_seeds,n_iters,output_path='./Data/output'):
     '''
@@ -141,26 +139,31 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
         bed_file = 'bed_'+str(iter_count)+'k.txt'
         
         # Load the most recent bed file
-        most_recent_bed = np.load(seed_folder / f'bed_{iter_count}k.npy')
+        most_recent_bed = np.loadtxt(seed_folder / bed_file)
         
         # Update the chain's initial bed
         chain.initial_bed = most_recent_bed
         
         # Load all previous result files
-        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
         previous_results = {
-            'loss_mc' : results_data['loss_mc'],
-            'loss_data' : results_data['loss_data'],
-            'loss' : results_data['loss'],
-            'steps' : results_data['steps'],
-            'resampled_times' : results_data['resampled_times'],
-            'blocks_used' : results_data['blocks_used']
+            'loss_mc': np.loadtxt(seed_folder / f'loss_mc_{iter_count}k.txt'),
+            'loss_data': np.loadtxt(seed_folder / f'loss_data_{iter_count}k.txt'),
+            'loss': np.loadtxt(seed_folder / f'loss_{iter_count}k.txt'),
+            'steps': np.loadtxt(seed_folder / f'steps_{iter_count}k.txt'),
+            'resampled_times': np.loadtxt(seed_folder / f'resampled_times_{iter_count}k.txt'),
+            'blocks_used': np.loadtxt(seed_folder / f'blocks_used_{iter_count}k.txt')
         }
         
         # Mark files for deletion
         files_to_delete = [
-            seed_folder / f'results_{iter_count}k.npz',
-            seed_folder / 'current_iter.txt'
+            #seed_folder / f'bed_{iter_count}k.txt',
+            seed_folder / 'current_iter.txt',
+            seed_folder / f'loss_mc_{iter_count}k.txt',
+            seed_folder / f'loss_data_{iter_count}k.txt',
+            seed_folder / f'loss_{iter_count}k.txt',
+            seed_folder / f'steps_{iter_count}k.txt',
+            seed_folder / f'resampled_times_{iter_count}k.txt',
+            seed_folder / f'blocks_used_{iter_count}k.txt'
         ]
         
         with open(seed_folder / 'RNGState_RandField.txt', "r") as file: 
@@ -171,7 +174,7 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     # Store positioning info
     chain.chain_id = param_run.get('chain_id', 'Unknown')
     chain.tqdm_position = param_run.get('tqdm_position', 0)
-    chain.seed = param_run.get('seed', 'Unknown')
+    #chain.seed = param_run.get('seed', 'Unknown')
 
     # Run the chain
     result = chain.run(
@@ -207,17 +210,13 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     iteration_label = f'{cumulative_iters // 1000}k'
     
     # Save all outputs with updated iteration label
-    np.save(seed_folder / f'bed_{iteration_label}.npy', beds)
-
-    np.savez_compressed(
-        seed_folder / f'results_{iteration_label}.npz',
-        loss_mc=loss_mc,
-        loss_data=loss_data,
-        loss=loss,
-        steps=steps,
-        resampled_times=resampled_times,
-        blocks_used=blocks_used
-    )
+    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
+    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
+    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
+    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
+    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
+    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
+    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
     
     # Delete old files after successfully saving new ones
     for file_path in files_to_delete:
@@ -347,26 +346,30 @@ def msc_run_wrapper(param_chain, param_run):
         cumulative_iters = iter_count * 1000 # Convert back to actual iterations
 
         # Load the most recent bed file
-        most_recent_bed = np.load(seed_folder / f'bed_{iter_count}k.npy')
+        most_recent_bed = np.loadtxt(bed_file)
 
         # Update the chain's intiial bed
         chain.initial_bed = most_recent_bed
 
         # Load all previous result files
-        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
         previous_results = {
-            'loss_mc' : results_data['loss_mc'],
-            'loss_data' : results_data['loss_data'],
-            'loss' : results_data['loss'],
-            'steps' : results_data['steps'],
-            'resampled_times' : results_data['resampled_times'],
-            'blocks_used' : results_data['blocks_used']
+            'loss_mc': np.loadtxt(seed_folder / f'loss_mc_{iter_count}k.txt'),
+            'loss_data': np.loadtxt(seed_folder / f'loss_data_{iter_count}k.txt'),
+            'loss': np.loadtxt(seed_folder / f'loss_{iter_count}k.txt'),
+            'steps': np.loadtxt(seed_folder / f'steps_{iter_count}k.txt'),
+            'resampled_times': np.loadtxt(seed_folder / f'resampled_times_{iter_count}k.txt'),
+            'blocks_used': np.loadtxt(seed_folder / f'blocks_used_{iter_count}k.txt')
         }
 
         # Mark files for deletion
         files_to_delete = [
-            seed_folder / f'results_{iter_count}k.npz',
-            seed_folder / 'current_iter.txt'
+            seed_folder / f'bed_{iter_count}k.txt',
+            seed_folder / f'loss_mc_{iter_count}k.txt',
+            seed_folder / f'loss_data_{iter_count}k.txt',
+            seed_folder / f'loss_{iter_count}k.txt',
+            seed_folder / f'steps_{iter_count}k.txt',
+            seed_folder / f'resampled_times_{iter_count}k.txt',
+            seed_folder / f'blocks_used_{iter_count}k.txt'
         ]
         
         with open(seed_folder / 'RNGState_chain.txt', "r") as file: 
@@ -407,17 +410,13 @@ def msc_run_wrapper(param_chain, param_run):
     iteration_label = f'{cumulative_iters // 1000}k'
 
     # Save all outputs with updated iteration label
-    np.save(seed_folder / f'bed_{iteration_label}.npy', beds)
-
-    np.savez_compressed(
-        seed_folder / f'results_{iteration_label}.npz',
-        loss_mc=loss_mc,
-        loss_data=loss_data,
-        loss=loss,
-        steps=steps,
-        resampled_times=resampled_times,
-        blocks_used=blocks_used
-    )
+    np.savetxt(seed_folder / f'bed_{iteration_label}.txt', beds)
+    np.savetxt(seed_folder / f'loss_mc_{iteration_label}.txt', loss_mc)
+    np.savetxt(seed_folder / f'loss_data_{iteration_label}.txt', loss_data)
+    np.savetxt(seed_folder / f'loss_{iteration_label}.txt', loss)
+    np.savetxt(seed_folder / f'steps_{iteration_label}.txt', steps)
+    np.savetxt(seed_folder / f'resampled_times_{iteration_label}.txt', resampled_times)
+    np.savetxt(seed_folder / f'blocks_used_{iteration_label}.txt', blocks_used)
 
     # Delete old files after successfully saving new ones
     for file_path in files_to_delete:
@@ -429,20 +428,21 @@ def msc_run_wrapper(param_chain, param_run):
 if __name__=='__main__':
     # Set file paths here
     #NOTE use r string literals in case backslashes are used
-    glacier_data_path = Path(r'DenmanDataGridded.csv') 
-    sgs_bed_path = Path(r'sgs_bed_denman.txt')
-    data_weight_path = Path(r'data_weight_denman.txt')
-    seed_file_path = Path(r'../200_seeds.txt')
-    output_path = Path(r'./Data/Denman')
+    glacier_data_path = Path(r'data/BindSchalder_Macayeal_IceStreams.csv') 
+    sgs_bed_path = Path(r'sgs_beds/sgs_0_bindshadler_macayeal.txt')
+    data_weight_path = Path(r'data/data_weight_bindshalder_macayeal.txt')
+    seed_file_path = Path(r'200_seeds.txt')
+    output_path = Path(r'data/bindshadler_macayeal/')
 
     # Multiprocessing params
-    n_iter = 5000
-    offset_idx = 0 # Which seed to start from (0-9)
-    n_chains = 10
+    n_iter = 2000000
+    offset_idx = 5 # Which seed to start from (0-9)
+    n_chains = 5
     n_workers = psutil.cpu_count(logical=False)-1
 
     # load compiled bed elevation measurements
     df = pd.read_csv(glacier_data_path)
+    print(f'Shape of Glacier data: {df.shape}')
     
     rng_seed = 0
     
@@ -458,7 +458,7 @@ if __name__=='__main__':
     cols = len(x_uniq)
     rows = len(y_uniq)
     
-    resolution = 500
+    resolution = config.resolution
     
     xx, yy = np.meshgrid(x_uniq, y_uniq)
     
@@ -490,7 +490,7 @@ if __name__=='__main__':
     df['Nbed'] = transformed_data
     
     # randomly drop out 50% of coordinates. Decrease this value if you have a lot of data and it takes a long time to run
-    df_sampled = df.sample(frac=0.5, random_state=rng_seed)
+    df_sampled = df.sample(frac=0.05, random_state=rng_seed)
     df_sampled = df_sampled[df_sampled["cond_bed"].isnull() == False]
     df_sampled = df_sampled[df_sampled["bedmap_mask"]==1]
     
@@ -498,8 +498,8 @@ if __name__=='__main__':
     coords = df_sampled[['x','y']].values
     values = df_sampled['Nbed']
 
-    maxlag = 80000      # maximum range distance
-    n_lags = 60         # num of bins (try decreasing if this is taking too long)
+    maxlag = 90000      # maximum range distance
+    n_lags = 50         # num of bins (try decreasing if this is taking too long)
 
     # compute variogram
     V1 = skg.Variogram(coords, values, bin_func='even', 
@@ -529,7 +529,8 @@ if __name__=='__main__':
     mc_res_bm = Topography.get_mass_conservation_residual(bedmachine_bed,bedmap_surf,velx,vely,dhdt,smb,resolution)
     
     # in multiprocessing, we choose to only use mass flux residual loss in squared sum (Gaussian distribution)
-    largeScaleChain.set_loss_type(sigma_mc=5, massConvInRegion=True)
+    largeScaleChain.set_loss_type(sigma_mc = config.sigma3
+                                  , massConvInRegion=True)
     
     #range_max and range_min changes topographies features' lateral scale
     #by default, I set range_max to variogram range
@@ -547,10 +548,10 @@ if __name__=='__main__':
     # initialize a RandField instance to be used for all large scale chains
     rf1 = MCMC.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
     
-    min_block_x = 50
-    max_block_x = 80
-    min_block_y = 50
-    max_block_y = 80
+    min_block_x = config.T3_xmin_block
+    max_block_x = config.T3_xmax_block
+    min_block_y = config.T3_ymin_block
+    max_block_y = config.T3_ymax_block
     rf1.set_block_sizes(min_block_x, max_block_x, min_block_y, max_block_y)
     
     logis_func_L = 2
@@ -578,47 +579,44 @@ if __name__=='__main__':
     largeScaleChain.set_random_generator(rng_seed = rng_seed)
     
     initial_beds = []
+
     for i in range(n_chains):
-        sgs_bed = np.loadtxt('Denman_sgs_bed_'+str(i)+'.txt')
+        # Sample name sgs_beds/sgs_1250680260_bindshadler_macayeal.txt
+        sgs_bed = np.loadtxt(f'./sgs_beds/sgs_{str(i)}_bindshadler_macayeal.txt')
         initial_beds.append(sgs_bed)
     #initial_beds = np.array([sgs_bed] * n_chains) # np.repeat(sgs_bed, n_chains)
-    
+
+
     with open(Path(seed_file_path), 'r') as f:
         lines = f.readlines()
     
     rng_seeds = []
     for line in lines:
         rng_seeds.append(int(line.strip()))
-        
+    
+
     # Create output directory for all results
+    
     for i in range(0, n_chains):
         #print(i, rng_seeds[i])
         ls_seed = rng_seeds[i]
         ls_seed_folder = output_path / 'LargeScaleChain' / f'{str(ls_seed)[:6]}'
-        ls_seed_folder.mkdir(parents=True, exist_ok=True)
 
-# =============================================================================
-#         ss_chain_folder = ls_seed_folder / 'SmallScaleChain'
-#         ss_chain_folder.mkdir(parents=True, exist_ok=True)
-# 
-#         # For each large scale chain, create 20 small scale chain folders
-#         for j in range(i*20, i*20 + 20):
-#             #print('\t', j,  rng_seeds[j])
-#             ss_seed = rng_seeds[j]
-#             ss_seed_folder = ss_chain_folder / f'{str(ss_seed)[:6]}'
-#             ss_seed_folder.mkdir(parents=True, exist_ok=True)
-# =============================================================================
+        ls_seed_folder.mkdir(parents=True, exist_ok=True)
+        ss_chain_folder = ls_seed_folder / 'SmallScaleChain'
+        ss_chain_folder.mkdir(parents=True, exist_ok=True)
+
+
+        # For each large scale chain, create 20 small scale chain folders
+        for j in range(i*20, i*20 + 20):
+             #print('\t', j,  rng_seeds[j])
+             ss_seed = rng_seeds[j]
+             ss_seed_folder = ss_chain_folder / f'{str(ss_seed)[:6]}'
+             ss_seed_folder.mkdir(parents=True, exist_ok=True)
     
     # Use the offset to select the appropriate seeds for the large scale chain
     selected_rng_seeds = rng_seeds[offset_idx:min(offset_idx + n_chains, len(rng_seeds[:-n_chains]))]
+          
+    n_iters = [n_iter]*n_chains
 
-    iteration_batches = []  
-    if n_iter < 100000:
-        iteration_batches = [n_iter]
-    else:
-        iteration_batches = [n_iter - 10000*9] + [10000]*9
-    
-    for iter_per_batch in iteration_batches:
-        n_iters = [iter_per_batch]*n_chains
-
-        result = largeScaleChain_mp(n_chains, n_workers, largeScaleChain, rf1, initial_beds, selected_rng_seeds, n_iters, output_path)
+    result = largeScaleChain_mp(n_chains, n_workers, largeScaleChain, rf1, initial_beds, selected_rng_seeds, n_iters, output_path)
