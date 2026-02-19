@@ -17,23 +17,7 @@ import os
 import csv
 import gstatsim as gs
 from PIL import Image, ImageFilter
-
-
-def _interpolate(interp_method, fromx, fromy, data, tox, toy, k):
-    # interpolate
-    if interp_method == 'spline':
-        interp = vd.Spline()
-    elif interp_method == 'linear':
-        interp = vd.Linear()
-    elif interp_method == 'kneighbors':
-        interp = vd.KNeighbors(k=k)
-    else:
-        raise ValueError('the interp_method is not correctly defined, exit the function')
-    
-    interp.fit((fromx, fromy), data)
-    result = interp.predict((tox, toy))
-    
-    return result
+from .Utilities import _interpolate
     
 
 """load surface mass balance data from the smb data from https://doi.org/10.5194/tc-12-1479-2018 and https://www.projects.science.uu.nl/iceclimate/publications/data/2018/vwessem2018_tc/RACMO_Yearly/
