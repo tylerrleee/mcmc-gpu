@@ -147,15 +147,15 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
         chain.initial_bed = most_recent_bed
         
         # Load all previous result files
-        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
-        previous_results = {
-            'loss_mc' : results_data['loss_mc'],
-            'loss_data' : results_data['loss_data'],
-            'loss' : results_data['loss'],
-            'steps' : results_data['steps'],
-            'resampled_times' : results_data['resampled_times'],
-            'blocks_used' : results_data['blocks_used']
-        }
+        with np.load(seed_folder / f'results_{iter_count}k.npz') as results_data:
+            previous_results = {
+                'loss_mc' : results_data['loss_mc'],
+                'loss_data' : results_data['loss_data'],
+                'loss' : results_data['loss'],
+                'steps' : results_data['steps'],
+                'resampled_times' : results_data['resampled_times'],
+                'blocks_used' : results_data['blocks_used']
+            }
         
         # Mark files for deletion
         files_to_delete = [
@@ -353,15 +353,15 @@ def msc_run_wrapper(param_chain, param_run):
         chain.initial_bed = most_recent_bed
 
         # Load all previous result files
-        results_data = np.load(seed_folder / f'results_{iter_count}k.npz')
-        previous_results = {
-            'loss_mc' : results_data['loss_mc'],
-            'loss_data' : results_data['loss_data'],
-            'loss' : results_data['loss'],
-            'steps' : results_data['steps'],
-            'resampled_times' : results_data['resampled_times'],
-            'blocks_used' : results_data['blocks_used']
-        }
+        with np.load(seed_folder / f'results_{iter_count}k.npz') as results_data:
+            previous_results = {
+                'loss_mc' : results_data['loss_mc'],
+                'loss_data' : results_data['loss_data'],
+                'loss' : results_data['loss'],
+                'steps' : results_data['steps'],
+                'resampled_times' : results_data['resampled_times'],
+                'blocks_used' : results_data['blocks_used']
+            }
 
         # Mark files for deletion
         files_to_delete = [
