@@ -78,8 +78,19 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     with mp.Pool(n_workers) as pool:
         result = pool.starmap(lsc_run_wrapper, params)
 
-    # Move cursor below chain outputs before printing the timing
-    print('\n' * (n_chains + 1))
+    # Print completed output
+    print('\n' * 3)
+    print(r'''
+           _o                  _                 _o_   o   o
+      o    (^)  _             (o)    >')         (^)  (^) (^)
+   _ (^) ('>~ _(v)_      _   //-\\   /V\      ('> ~ __.~   ~
+ ('v')~ // \\  /-\      (.)-=_\_/)   (_)>     (V)  ~  ~~ /__ /\
+//-=-\\ (\_/) (\_/)      V \ _)>~    ~~      <(__\[     ](__=_')
+(\_=_/)  ^ ^   ^ ^       ~  ~~                ~~~~        ~~~~~
+_^^_^^   __  ..-.___..---I~~~:_  .__...--.._.;-'I~~~~-.____...;-
+ |~|~~~~~| ~~|  _   |    |  _| ~~|  |  |  |  |_ |      | _ |  |
+_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~-~
+    ''')
 
     toc = time.time()
     print(f'Completed in {toc-tic:.2f} seconds')
@@ -286,8 +297,19 @@ def smallScaleChain_mp(n_chains, n_workers, smallScaleChain, initial_beds, ssc_r
     with mp.Pool(n_workers) as pool:
         result = pool.starmap(msc_run_wrapper, params)
 
-    # Move cursor below chain outputs before printing the timing
-    print('\n' * (n_chains + 2))
+    # Print final output
+    print('\n' * 3)
+    print(r'''
+           _o                  _                 _o_   o   o
+      o    (^)  _             (o)    >')         (^)  (^) (^)
+   _ (^) ('>~ _(v)_      _   //-\\   /V\      ('> ~ __.~   ~
+ ('v')~ // \\  /-\      (.)-=_\_/)   (_)>     (V)  ~  ~~ /__ /\
+//-=-\\ (\_/) (\_/)      V \ _)>~    ~~      <(__\[     ](__=_')
+(\_=_/)  ^ ^   ^ ^       ~  ~~                ~~~~        ~~~~~
+_^^_^^   __  ..-.___..---I~~~:_  .__...--.._.;-'I~~~~-.____...;-
+ |~|~~~~~| ~~|  _   |    |  _| ~~|  |  |  |  |_ |      | _ |  |
+_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~-~
+    ''')
 
     toc = time.time()
     print(f'Completed in {toc-tic} seconds')
