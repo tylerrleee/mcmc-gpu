@@ -1430,14 +1430,14 @@ class chain_crf(chain):
         return total, loss_mc, loss_data
     
     def _set_torch_device(self):
-        #if torch.cuda.is_available():
-        #    device = torch.device("cuda")
-        #elif torch.backends.mps.is_available():
-        #    device = torch.device("cpu")
-        #else:
-        #    device = torch.device("cpu")
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
         
-        self.device = torch.device("cpu")
+        self.device = device
 
     def run(self, n_iter, RF, only_save_last_bed=False, info_per_iter = 1000, plot=True, progress_bar=True):
         """Runs the MCMC sampling chain to generate topography realizations using PyTorch on GPU
