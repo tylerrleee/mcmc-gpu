@@ -1,0 +1,4268 @@
+[
+    {
+        "grid_size": 50,
+        "resolution": 50,
+        "np_runtime": 2.55858400487341e-05,
+        "torch_runtime": 0.00034050834001391194
+    },
+    {
+        "grid_size": 50,
+        "resolution": 100,
+        "np_runtime": 2.3639999999431892e-05,
+        "torch_runtime": 0.0003611825000552926
+    },
+    {
+        "grid_size": 50,
+        "resolution": 150,
+        "np_runtime": 2.5953320000553505e-05,
+        "torch_runtime": 0.000396223339921562
+    },
+    {
+        "grid_size": 50,
+        "resolution": 200,
+        "np_runtime": 2.3660820006625726e-05,
+        "torch_runtime": 0.00035923165996791794
+    },
+    {
+        "grid_size": 50,
+        "resolution": 250,
+        "np_runtime": 2.2979159984970467e-05,
+        "torch_runtime": 0.00044493084002169783
+    },
+    {
+        "grid_size": 50,
+        "resolution": 300,
+        "np_runtime": 2.2999180073384197e-05,
+        "torch_runtime": 0.00035149249990354295
+    },
+    {
+        "grid_size": 50,
+        "resolution": 350,
+        "np_runtime": 2.4918319977587088e-05,
+        "torch_runtime": 0.00041190831994754264
+    },
+    {
+        "grid_size": 50,
+        "resolution": 400,
+        "np_runtime": 2.2197500074980782e-05,
+        "torch_runtime": 0.0004022183199413121
+    },
+    {
+        "grid_size": 50,
+        "resolution": 450,
+        "np_runtime": 2.244333998532966e-05,
+        "torch_runtime": 0.00036236666011973284
+    },
+    {
+        "grid_size": 100,
+        "resolution": 50,
+        "np_runtime": 4.304168003727682e-05,
+        "torch_runtime": 0.00040457499999320136
+    },
+    {
+        "grid_size": 100,
+        "resolution": 100,
+        "np_runtime": 3.6885820009047166e-05,
+        "torch_runtime": 0.000404370820033364
+    },
+    {
+        "grid_size": 100,
+        "resolution": 150,
+        "np_runtime": 3.655833992525004e-05,
+        "torch_runtime": 0.0003729791598743759
+    },
+    {
+        "grid_size": 100,
+        "resolution": 200,
+        "np_runtime": 3.586334001738578e-05,
+        "torch_runtime": 0.00041663333991891704
+    },
+    {
+        "grid_size": 100,
+        "resolution": 250,
+        "np_runtime": 3.596583992475644e-05,
+        "torch_runtime": 0.0003517808399919886
+    },
+    {
+        "grid_size": 100,
+        "resolution": 300,
+        "np_runtime": 3.947000004700385e-05,
+        "torch_runtime": 0.0003868491799221374
+    },
+    {
+        "grid_size": 100,
+        "resolution": 350,
+        "np_runtime": 3.7266659928718583e-05,
+        "torch_runtime": 0.0004135899999528192
+    },
+    {
+        "grid_size": 100,
+        "resolution": 400,
+        "np_runtime": 3.983834001701325e-05,
+        "torch_runtime": 0.00044637583996518513
+    },
+    {
+        "grid_size": 100,
+        "resolution": 450,
+        "np_runtime": 3.636749999714084e-05,
+        "torch_runtime": 0.00038336915997206234
+    },
+    {
+        "grid_size": 150,
+        "resolution": 50,
+        "np_runtime": 6.376666002324782e-05,
+        "torch_runtime": 0.0004035450000083074
+    },
+    {
+        "grid_size": 150,
+        "resolution": 100,
+        "np_runtime": 5.3316660050768405e-05,
+        "torch_runtime": 0.00045991666003828867
+    },
+    {
+        "grid_size": 150,
+        "resolution": 150,
+        "np_runtime": 5.61750000633765e-05,
+        "torch_runtime": 0.0004161408400977962
+    },
+    {
+        "grid_size": 150,
+        "resolution": 200,
+        "np_runtime": 5.584250000538304e-05,
+        "torch_runtime": 0.00043490084004588425
+    },
+    {
+        "grid_size": 150,
+        "resolution": 250,
+        "np_runtime": 5.573415997787379e-05,
+        "torch_runtime": 0.0004360941800405271
+    },
+    {
+        "grid_size": 150,
+        "resolution": 300,
+        "np_runtime": 5.8552499976940455e-05,
+        "torch_runtime": 0.0004064841600484215
+    },
+    {
+        "grid_size": 150,
+        "resolution": 350,
+        "np_runtime": 5.667165998602286e-05,
+        "torch_runtime": 0.000466794999956619
+    },
+    {
+        "grid_size": 150,
+        "resolution": 400,
+        "np_runtime": 6.141499994555488e-05,
+        "torch_runtime": 0.0004146866800147109
+    },
+    {
+        "grid_size": 150,
+        "resolution": 450,
+        "np_runtime": 5.957916000625119e-05,
+        "torch_runtime": 0.00043194249999942255
+    },
+    {
+        "grid_size": 200,
+        "resolution": 50,
+        "np_runtime": 0.00010698666010284796,
+        "torch_runtime": 0.00048043334012618286
+    },
+    {
+        "grid_size": 200,
+        "resolution": 100,
+        "np_runtime": 9.802999993553385e-05,
+        "torch_runtime": 0.00048223249992588533
+    },
+    {
+        "grid_size": 200,
+        "resolution": 150,
+        "np_runtime": 9.140750000369735e-05,
+        "torch_runtime": 0.0004699800000526011
+    },
+    {
+        "grid_size": 200,
+        "resolution": 200,
+        "np_runtime": 9.593416005373001e-05,
+        "torch_runtime": 0.00046913666010368616
+    },
+    {
+        "grid_size": 200,
+        "resolution": 250,
+        "np_runtime": 9.393418004037813e-05,
+        "torch_runtime": 0.0004494033400260378
+    },
+    {
+        "grid_size": 200,
+        "resolution": 300,
+        "np_runtime": 9.133915998972953e-05,
+        "torch_runtime": 0.0004716516600456089
+    },
+    {
+        "grid_size": 200,
+        "resolution": 350,
+        "np_runtime": 9.118499991018326e-05,
+        "torch_runtime": 0.0004682516600587405
+    },
+    {
+        "grid_size": 200,
+        "resolution": 400,
+        "np_runtime": 0.00012097915998310782,
+        "torch_runtime": 0.000462250000127824
+    },
+    {
+        "grid_size": 200,
+        "resolution": 450,
+        "np_runtime": 9.428000004845671e-05,
+        "torch_runtime": 0.00044915500009665263
+    },
+    {
+        "grid_size": 250,
+        "resolution": 50,
+        "np_runtime": 0.00015155082001001575,
+        "torch_runtime": 0.0005116708400601056
+    },
+    {
+        "grid_size": 250,
+        "resolution": 100,
+        "np_runtime": 0.00014764417996047995,
+        "torch_runtime": 0.0005072808200202416
+    },
+    {
+        "grid_size": 250,
+        "resolution": 150,
+        "np_runtime": 0.00014780418001464568,
+        "torch_runtime": 0.000520214159914758
+    },
+    {
+        "grid_size": 250,
+        "resolution": 200,
+        "np_runtime": 0.00014299500006018207,
+        "torch_runtime": 0.0005072283401386812
+    },
+    {
+        "grid_size": 250,
+        "resolution": 250,
+        "np_runtime": 0.00017185418008011766,
+        "torch_runtime": 0.0004915775000699796
+    },
+    {
+        "grid_size": 250,
+        "resolution": 300,
+        "np_runtime": 0.00012149834001320414,
+        "torch_runtime": 0.0004942241599201224
+    },
+    {
+        "grid_size": 250,
+        "resolution": 350,
+        "np_runtime": 0.00016193499992368744,
+        "torch_runtime": 0.0004858308398979716
+    },
+    {
+        "grid_size": 250,
+        "resolution": 400,
+        "np_runtime": 0.0001587808399926871,
+        "torch_runtime": 0.0004782108399376739
+    },
+    {
+        "grid_size": 250,
+        "resolution": 450,
+        "np_runtime": 0.00012022250011796131,
+        "torch_runtime": 0.0004802099999506027
+    },
+    {
+        "grid_size": 300,
+        "resolution": 50,
+        "np_runtime": 0.0008752000000094995,
+        "torch_runtime": 0.0009505758399609476
+    },
+    {
+        "grid_size": 300,
+        "resolution": 100,
+        "np_runtime": 0.00019163416000083088,
+        "torch_runtime": 0.0005571658400003798
+    },
+    {
+        "grid_size": 300,
+        "resolution": 150,
+        "np_runtime": 0.00018820833996869625,
+        "torch_runtime": 0.0005344758200226352
+    },
+    {
+        "grid_size": 300,
+        "resolution": 200,
+        "np_runtime": 0.0001884583399805706,
+        "torch_runtime": 0.0005754333399818279
+    },
+    {
+        "grid_size": 300,
+        "resolution": 250,
+        "np_runtime": 0.00016476250006235203,
+        "torch_runtime": 0.000589496680040611
+    },
+    {
+        "grid_size": 300,
+        "resolution": 300,
+        "np_runtime": 0.00020385499999974854,
+        "torch_runtime": 0.0005810549999296199
+    },
+    {
+        "grid_size": 300,
+        "resolution": 350,
+        "np_runtime": 0.00020655250002164395,
+        "torch_runtime": 0.0004897891799919307
+    },
+    {
+        "grid_size": 300,
+        "resolution": 400,
+        "np_runtime": 0.0001496358400618192,
+        "torch_runtime": 0.0004101783399528358
+    },
+    {
+        "grid_size": 300,
+        "resolution": 450,
+        "np_runtime": 0.0002068775000225287,
+        "torch_runtime": 0.0003749908399186097
+    },
+    {
+        "grid_size": 350,
+        "resolution": 50,
+        "np_runtime": 0.00043082333999336695,
+        "torch_runtime": 0.000640656679897802
+    },
+    {
+        "grid_size": 350,
+        "resolution": 100,
+        "np_runtime": 0.000282651660090778,
+        "torch_runtime": 0.0004989191600179765
+    },
+    {
+        "grid_size": 350,
+        "resolution": 150,
+        "np_runtime": 0.00022699749999446794,
+        "torch_runtime": 0.0006571049999911338
+    },
+    {
+        "grid_size": 350,
+        "resolution": 200,
+        "np_runtime": 0.00019444999998086132,
+        "torch_runtime": 0.0006899858399992809
+    },
+    {
+        "grid_size": 350,
+        "resolution": 250,
+        "np_runtime": 0.0002693100000033155,
+        "torch_runtime": 0.0007072916800098028
+    },
+    {
+        "grid_size": 350,
+        "resolution": 300,
+        "np_runtime": 0.00027508416009368374,
+        "torch_runtime": 0.0006647099999827333
+    },
+    {
+        "grid_size": 350,
+        "resolution": 350,
+        "np_runtime": 0.0002851791800640058,
+        "torch_runtime": 0.0006696675000421237
+    },
+    {
+        "grid_size": 350,
+        "resolution": 400,
+        "np_runtime": 0.0002891166799236089,
+        "torch_runtime": 0.0007001141599903348
+    },
+    {
+        "grid_size": 350,
+        "resolution": 450,
+        "np_runtime": 0.00029696583995246327,
+        "torch_runtime": 0.0006653466599527746
+    },
+    {
+        "grid_size": 400,
+        "resolution": 50,
+        "np_runtime": 0.0004286508199584205,
+        "torch_runtime": 0.0007955799999763257
+    },
+    {
+        "grid_size": 400,
+        "resolution": 100,
+        "np_runtime": 0.0003952291599125601,
+        "torch_runtime": 0.0007706774999678601
+    },
+    {
+        "grid_size": 400,
+        "resolution": 150,
+        "np_runtime": 0.00037602584008709526,
+        "torch_runtime": 0.0007961716598947532
+    },
+    {
+        "grid_size": 400,
+        "resolution": 200,
+        "np_runtime": 0.0004289333400083706,
+        "torch_runtime": 0.0006671674999233801
+    },
+    {
+        "grid_size": 400,
+        "resolution": 250,
+        "np_runtime": 0.00041913166001904755,
+        "torch_runtime": 0.0007617191600729712
+    },
+    {
+        "grid_size": 400,
+        "resolution": 300,
+        "np_runtime": 0.00040246165997814387,
+        "torch_runtime": 0.000811402499966789
+    },
+    {
+        "grid_size": 400,
+        "resolution": 350,
+        "np_runtime": 0.0003999575000489131,
+        "torch_runtime": 0.0007950591600092594
+    },
+    {
+        "grid_size": 400,
+        "resolution": 400,
+        "np_runtime": 0.0005356499999470543,
+        "torch_runtime": 0.0007949908400769345
+    },
+    {
+        "grid_size": 400,
+        "resolution": 450,
+        "np_runtime": 0.0004053600000042934,
+        "torch_runtime": 0.0005350108200218529
+    },
+    {
+        "grid_size": 450,
+        "resolution": 50,
+        "np_runtime": 0.0005755724999471568,
+        "torch_runtime": 0.0006518908399448264
+    },
+    {
+        "grid_size": 450,
+        "resolution": 100,
+        "np_runtime": 0.0005269933400268201,
+        "torch_runtime": 0.0006897033199493308
+    },
+    {
+        "grid_size": 450,
+        "resolution": 150,
+        "np_runtime": 0.000526851659960812,
+        "torch_runtime": 0.0008219516598910559
+    },
+    {
+        "grid_size": 450,
+        "resolution": 200,
+        "np_runtime": 0.000562705839984119,
+        "torch_runtime": 0.0005733774999680464
+    },
+    {
+        "grid_size": 450,
+        "resolution": 250,
+        "np_runtime": 0.0005173758200544399,
+        "torch_runtime": 0.0007062466599745676
+    },
+    {
+        "grid_size": 450,
+        "resolution": 300,
+        "np_runtime": 0.0005295191600453109,
+        "torch_runtime": 0.0005688483400444966
+    },
+    {
+        "grid_size": 450,
+        "resolution": 350,
+        "np_runtime": 0.0005311791600252036,
+        "torch_runtime": 0.0007014358400192577
+    },
+    {
+        "grid_size": 450,
+        "resolution": 400,
+        "np_runtime": 0.0005547391599975526,
+        "torch_runtime": 0.0007607041600567754
+    },
+    {
+        "grid_size": 450,
+        "resolution": 450,
+        "np_runtime": 0.0004779083198809531,
+        "torch_runtime": 0.0005585166599485091
+    },
+    {
+        "grid_size": 500,
+        "resolution": 50,
+        "np_runtime": 0.000694109180039959,
+        "torch_runtime": 0.0008416158400359564
+    },
+    {
+        "grid_size": 500,
+        "resolution": 100,
+        "np_runtime": 0.0006377391598653048,
+        "torch_runtime": 0.0007754466799087822
+    },
+    {
+        "grid_size": 500,
+        "resolution": 150,
+        "np_runtime": 0.0006535224999242927,
+        "torch_runtime": 0.0007791333200293593
+    },
+    {
+        "grid_size": 500,
+        "resolution": 200,
+        "np_runtime": 0.0006975300000340212,
+        "torch_runtime": 0.0007162400000379421
+    },
+    {
+        "grid_size": 500,
+        "resolution": 250,
+        "np_runtime": 0.0007074525000643916,
+        "torch_runtime": 0.0007797108199156355
+    },
+    {
+        "grid_size": 500,
+        "resolution": 300,
+        "np_runtime": 0.0006518366601085291,
+        "torch_runtime": 0.0007775541600130964
+    },
+    {
+        "grid_size": 500,
+        "resolution": 350,
+        "np_runtime": 0.0006487683400337119,
+        "torch_runtime": 0.0008857683399401139
+    },
+    {
+        "grid_size": 500,
+        "resolution": 400,
+        "np_runtime": 0.0006486008400679566,
+        "torch_runtime": 0.0007932549998804461
+    },
+    {
+        "grid_size": 500,
+        "resolution": 450,
+        "np_runtime": 0.0006449208399862982,
+        "torch_runtime": 0.0007756783399963752
+    },
+    {
+        "grid_size": 550,
+        "resolution": 50,
+        "np_runtime": 0.0007399333200010005,
+        "torch_runtime": 0.0009679241600679233
+    },
+    {
+        "grid_size": 550,
+        "resolution": 100,
+        "np_runtime": 0.0007467791599628981,
+        "torch_runtime": 0.0009984241600614042
+    },
+    {
+        "grid_size": 550,
+        "resolution": 150,
+        "np_runtime": 0.0006927775000804103,
+        "torch_runtime": 0.0008639949999633245
+    },
+    {
+        "grid_size": 550,
+        "resolution": 200,
+        "np_runtime": 0.0010386524999921676,
+        "torch_runtime": 0.0009579049999592826
+    },
+    {
+        "grid_size": 550,
+        "resolution": 250,
+        "np_runtime": 0.0009889058400585782,
+        "torch_runtime": 0.0009528566600056365
+    },
+    {
+        "grid_size": 550,
+        "resolution": 300,
+        "np_runtime": 0.0007948733199737034,
+        "torch_runtime": 0.0009031891600170638
+    },
+    {
+        "grid_size": 550,
+        "resolution": 350,
+        "np_runtime": 0.0008206775000144261,
+        "torch_runtime": 0.0009622116798709612
+    },
+    {
+        "grid_size": 550,
+        "resolution": 400,
+        "np_runtime": 0.0007694608399469871,
+        "torch_runtime": 0.00090526415995555
+    },
+    {
+        "grid_size": 550,
+        "resolution": 450,
+        "np_runtime": 0.0007989533399813809,
+        "torch_runtime": 0.0009708466600568499
+    },
+    {
+        "grid_size": 600,
+        "resolution": 50,
+        "np_runtime": 0.0011586016599903813,
+        "torch_runtime": 0.0009763425000710413
+    },
+    {
+        "grid_size": 600,
+        "resolution": 100,
+        "np_runtime": 0.001010649180097971,
+        "torch_runtime": 0.0010558400000445544
+    },
+    {
+        "grid_size": 600,
+        "resolution": 150,
+        "np_runtime": 0.001123432500025956,
+        "torch_runtime": 0.0010933150000346358
+    },
+    {
+        "grid_size": 600,
+        "resolution": 200,
+        "np_runtime": 0.0009783866800717079,
+        "torch_runtime": 0.0010019608400762081
+    },
+    {
+        "grid_size": 600,
+        "resolution": 250,
+        "np_runtime": 0.0009888874999887775,
+        "torch_runtime": 0.001098083319957368
+    },
+    {
+        "grid_size": 600,
+        "resolution": 300,
+        "np_runtime": 0.0009798783200676553,
+        "torch_runtime": 0.0010253916600777302
+    },
+    {
+        "grid_size": 600,
+        "resolution": 350,
+        "np_runtime": 0.0010158058399974835,
+        "torch_runtime": 0.0011315291600476486
+    },
+    {
+        "grid_size": 600,
+        "resolution": 400,
+        "np_runtime": 0.0010670200000458862,
+        "torch_runtime": 0.0012409399999887682
+    },
+    {
+        "grid_size": 600,
+        "resolution": 450,
+        "np_runtime": 0.0011653025000123308,
+        "torch_runtime": 0.0010200966599222738
+    },
+    {
+        "grid_size": 650,
+        "resolution": 50,
+        "np_runtime": 0.0016060191800352187,
+        "torch_runtime": 0.0010157733199594077
+    },
+    {
+        "grid_size": 650,
+        "resolution": 100,
+        "np_runtime": 0.0014734950001002289,
+        "torch_runtime": 0.0010604083200450986
+    },
+    {
+        "grid_size": 650,
+        "resolution": 150,
+        "np_runtime": 0.0015693233400816099,
+        "torch_runtime": 0.0011630716601212043
+    },
+    {
+        "grid_size": 650,
+        "resolution": 200,
+        "np_runtime": 0.0014836683201428968,
+        "torch_runtime": 0.0012682708200009074
+    },
+    {
+        "grid_size": 650,
+        "resolution": 250,
+        "np_runtime": 0.0014592916799301748,
+        "torch_runtime": 0.0011637875001179055
+    },
+    {
+        "grid_size": 650,
+        "resolution": 300,
+        "np_runtime": 0.0013660266800434328,
+        "torch_runtime": 0.0011951508199854288
+    },
+    {
+        "grid_size": 650,
+        "resolution": 350,
+        "np_runtime": 0.0015408833199762738,
+        "torch_runtime": 0.001192577499896288
+    },
+    {
+        "grid_size": 650,
+        "resolution": 400,
+        "np_runtime": 0.0014721233199816196,
+        "torch_runtime": 0.0011701508400437889
+    },
+    {
+        "grid_size": 650,
+        "resolution": 450,
+        "np_runtime": 0.0015819291799562052,
+        "torch_runtime": 0.0009571316800429486
+    },
+    {
+        "grid_size": 700,
+        "resolution": 50,
+        "np_runtime": 0.0017518691800069064,
+        "torch_runtime": 0.0012242550001246855
+    },
+    {
+        "grid_size": 700,
+        "resolution": 100,
+        "np_runtime": 0.001841110840032343,
+        "torch_runtime": 0.0012488725000002886
+    },
+    {
+        "grid_size": 700,
+        "resolution": 150,
+        "np_runtime": 0.0017971716600004583,
+        "torch_runtime": 0.001248749179940205
+    },
+    {
+        "grid_size": 700,
+        "resolution": 200,
+        "np_runtime": 0.001600379160081502,
+        "torch_runtime": 0.0012799508399621118
+    },
+    {
+        "grid_size": 700,
+        "resolution": 250,
+        "np_runtime": 0.0021572266799921636,
+        "torch_runtime": 0.0013176991599902976
+    },
+    {
+        "grid_size": 700,
+        "resolution": 300,
+        "np_runtime": 0.001959247500053607,
+        "torch_runtime": 0.0012610041598964017
+    },
+    {
+        "grid_size": 700,
+        "resolution": 350,
+        "np_runtime": 0.0017808383400551974,
+        "torch_runtime": 0.0012973758399311918
+    },
+    {
+        "grid_size": 700,
+        "resolution": 400,
+        "np_runtime": 0.0018683900000178255,
+        "torch_runtime": 0.0013025074999313802
+    },
+    {
+        "grid_size": 700,
+        "resolution": 450,
+        "np_runtime": 0.001717344159987988,
+        "torch_runtime": 0.0012236974999541416
+    },
+    {
+        "grid_size": 750,
+        "resolution": 50,
+        "np_runtime": 0.0024306975000945386,
+        "torch_runtime": 0.0014149650000035764
+    },
+    {
+        "grid_size": 750,
+        "resolution": 100,
+        "np_runtime": 0.0022544716599804814,
+        "torch_runtime": 0.001234393339982489
+    },
+    {
+        "grid_size": 750,
+        "resolution": 150,
+        "np_runtime": 0.0021276575000956656,
+        "torch_runtime": 0.0013559858400549274
+    },
+    {
+        "grid_size": 750,
+        "resolution": 200,
+        "np_runtime": 0.0020893683200119994,
+        "torch_runtime": 0.0013328058399201836
+    },
+    {
+        "grid_size": 750,
+        "resolution": 250,
+        "np_runtime": 0.0021007366600679232,
+        "torch_runtime": 0.0013693925000552553
+    },
+    {
+        "grid_size": 750,
+        "resolution": 300,
+        "np_runtime": 0.0021526341600110756,
+        "torch_runtime": 0.0013087533399811946
+    },
+    {
+        "grid_size": 750,
+        "resolution": 350,
+        "np_runtime": 0.0021404424999491314,
+        "torch_runtime": 0.0013451691600494086
+    },
+    {
+        "grid_size": 750,
+        "resolution": 400,
+        "np_runtime": 0.002285367500007851,
+        "torch_runtime": 0.00137463665989344
+    },
+    {
+        "grid_size": 750,
+        "resolution": 450,
+        "np_runtime": 0.0022478083400346805,
+        "torch_runtime": 0.0013652949999959673
+    },
+    {
+        "grid_size": 800,
+        "resolution": 50,
+        "np_runtime": 0.0026132466600392945,
+        "torch_runtime": 0.0016574724999372848
+    },
+    {
+        "grid_size": 800,
+        "resolution": 100,
+        "np_runtime": 0.002479507499956526,
+        "torch_runtime": 0.0014852358200005255
+    },
+    {
+        "grid_size": 800,
+        "resolution": 150,
+        "np_runtime": 0.0025554074998945,
+        "torch_runtime": 0.0015497091600263956
+    },
+    {
+        "grid_size": 800,
+        "resolution": 200,
+        "np_runtime": 0.002468090000038501,
+        "torch_runtime": 0.0014082183199934661
+    },
+    {
+        "grid_size": 800,
+        "resolution": 250,
+        "np_runtime": 0.002783054180035833,
+        "torch_runtime": 0.0015032633399823681
+    },
+    {
+        "grid_size": 800,
+        "resolution": 300,
+        "np_runtime": 0.0026999066800635772,
+        "torch_runtime": 0.0014578933200391476
+    },
+    {
+        "grid_size": 800,
+        "resolution": 350,
+        "np_runtime": 0.0025714108400279657,
+        "torch_runtime": 0.001286357500066515
+    },
+    {
+        "grid_size": 800,
+        "resolution": 400,
+        "np_runtime": 0.0025529425000422636,
+        "torch_runtime": 0.0013711850000254343
+    },
+    {
+        "grid_size": 800,
+        "resolution": 450,
+        "np_runtime": 0.0025154983199900016,
+        "torch_runtime": 0.0013737275000312366
+    },
+    {
+        "grid_size": 850,
+        "resolution": 50,
+        "np_runtime": 0.0038052625001000705,
+        "torch_runtime": 0.0015854008399765007
+    },
+    {
+        "grid_size": 850,
+        "resolution": 100,
+        "np_runtime": 0.0026888050000707154,
+        "torch_runtime": 0.0014766666600189637
+    },
+    {
+        "grid_size": 850,
+        "resolution": 150,
+        "np_runtime": 0.0027226133400108667,
+        "torch_runtime": 0.0016091983199294192
+    },
+    {
+        "grid_size": 850,
+        "resolution": 200,
+        "np_runtime": 0.0028179774999443907,
+        "torch_runtime": 0.0016505516799225006
+    },
+    {
+        "grid_size": 850,
+        "resolution": 250,
+        "np_runtime": 0.0030209208400628993,
+        "torch_runtime": 0.0016137708400492557
+    },
+    {
+        "grid_size": 850,
+        "resolution": 300,
+        "np_runtime": 0.003292748340027174,
+        "torch_runtime": 0.0016350891599722671
+    },
+    {
+        "grid_size": 850,
+        "resolution": 350,
+        "np_runtime": 0.0029665224999189375,
+        "torch_runtime": 0.001686795840068953
+    },
+    {
+        "grid_size": 850,
+        "resolution": 400,
+        "np_runtime": 0.002980712499993388,
+        "torch_runtime": 0.0015209575000335463
+    },
+    {
+        "grid_size": 850,
+        "resolution": 450,
+        "np_runtime": 0.003140091679961188,
+        "torch_runtime": 0.001501516660064226
+    },
+    {
+        "grid_size": 900,
+        "resolution": 50,
+        "np_runtime": 0.0031441883399384095,
+        "torch_runtime": 0.0018182758201146499
+    },
+    {
+        "grid_size": 900,
+        "resolution": 100,
+        "np_runtime": 0.00301427665996016,
+        "torch_runtime": 0.0017568124999525025
+    },
+    {
+        "grid_size": 900,
+        "resolution": 150,
+        "np_runtime": 0.003263016679993598,
+        "torch_runtime": 0.001733819159999257
+    },
+    {
+        "grid_size": 900,
+        "resolution": 200,
+        "np_runtime": 0.0030035808400134555,
+        "torch_runtime": 0.001713176659977762
+    },
+    {
+        "grid_size": 900,
+        "resolution": 250,
+        "np_runtime": 0.0033648966600594576,
+        "torch_runtime": 0.00172647915998823
+    },
+    {
+        "grid_size": 900,
+        "resolution": 300,
+        "np_runtime": 0.003321379179978976,
+        "torch_runtime": 0.0017607099999440833
+    },
+    {
+        "grid_size": 900,
+        "resolution": 350,
+        "np_runtime": 0.0030035891800071113,
+        "torch_runtime": 0.0016916733399557416
+    },
+    {
+        "grid_size": 900,
+        "resolution": 400,
+        "np_runtime": 0.003222375839977758,
+        "torch_runtime": 0.0017650075000710786
+    },
+    {
+        "grid_size": 900,
+        "resolution": 450,
+        "np_runtime": 0.003395039160095621,
+        "torch_runtime": 0.0016667750000488014
+    },
+    {
+        "grid_size": 950,
+        "resolution": 50,
+        "np_runtime": 0.0036136316601186992,
+        "torch_runtime": 0.001881088340014685
+    },
+    {
+        "grid_size": 950,
+        "resolution": 100,
+        "np_runtime": 0.003660496680095093,
+        "torch_runtime": 0.001890773339982843
+    },
+    {
+        "grid_size": 950,
+        "resolution": 150,
+        "np_runtime": 0.0035616133200528565,
+        "torch_runtime": 0.00183674499989138
+    },
+    {
+        "grid_size": 950,
+        "resolution": 200,
+        "np_runtime": 0.0034225633401365487,
+        "torch_runtime": 0.0018259416600631085
+    },
+    {
+        "grid_size": 950,
+        "resolution": 250,
+        "np_runtime": 0.003437697500048671,
+        "torch_runtime": 0.0018899916599912103
+    },
+    {
+        "grid_size": 950,
+        "resolution": 300,
+        "np_runtime": 0.0035732574999565257,
+        "torch_runtime": 0.00197984834012459
+    },
+    {
+        "grid_size": 950,
+        "resolution": 350,
+        "np_runtime": 0.0037645508399873507,
+        "torch_runtime": 0.001764545000041835
+    },
+    {
+        "grid_size": 950,
+        "resolution": 400,
+        "np_runtime": 0.0035900766801205465,
+        "torch_runtime": 0.001848640840034932
+    },
+    {
+        "grid_size": 950,
+        "resolution": 450,
+        "np_runtime": 0.003590094160026638,
+        "torch_runtime": 0.0018060350000450854
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 50,
+        "np_runtime": 0.004071090000070399,
+        "torch_runtime": 0.0019901183400361333
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 100,
+        "np_runtime": 0.004505044999968959,
+        "torch_runtime": 0.002039433340105461
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 150,
+        "np_runtime": 0.0039059650000126565,
+        "torch_runtime": 0.0020020775000739377
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 200,
+        "np_runtime": 0.00406185418003588,
+        "torch_runtime": 0.002029414999997243
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 250,
+        "np_runtime": 0.0037761183400289154,
+        "torch_runtime": 0.0021028574999945706
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 300,
+        "np_runtime": 0.003825171680073254,
+        "torch_runtime": 0.002092586679937085
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 350,
+        "np_runtime": 0.0043617525001172905,
+        "torch_runtime": 0.002124177499936195
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 400,
+        "np_runtime": 0.0036727383399556856,
+        "torch_runtime": 0.0020647474999714176
+    },
+    {
+        "grid_size": 1000,
+        "resolution": 450,
+        "np_runtime": 0.004000629160000244,
+        "torch_runtime": 0.0020685499999672174
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 50,
+        "np_runtime": 0.004415494159911759,
+        "torch_runtime": 0.0022526558200479485
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 100,
+        "np_runtime": 0.004564373320026789,
+        "torch_runtime": 0.002113275000010617
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 150,
+        "np_runtime": 0.004589866659953259,
+        "torch_runtime": 0.0022474108400638215
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 200,
+        "np_runtime": 0.004455009179946501,
+        "torch_runtime": 0.0022355958400294184
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 250,
+        "np_runtime": 0.004491550839884439,
+        "torch_runtime": 0.0022198475000914184
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 300,
+        "np_runtime": 0.004459802500059595,
+        "torch_runtime": 0.0022304924999480137
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 350,
+        "np_runtime": 0.0045476324998890046,
+        "torch_runtime": 0.0029742166599316987
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 400,
+        "np_runtime": 0.004507528319954872,
+        "torch_runtime": 0.002268408319941955
+    },
+    {
+        "grid_size": 1050,
+        "resolution": 450,
+        "np_runtime": 0.005323516659991583,
+        "torch_runtime": 0.0021960533400124404
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 50,
+        "np_runtime": 0.005158210000081454,
+        "torch_runtime": 0.0023540958399826195
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 100,
+        "np_runtime": 0.005047689179918962,
+        "torch_runtime": 0.0023227866599336267
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 150,
+        "np_runtime": 0.0049370683399320115,
+        "torch_runtime": 0.002364625000045635
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 200,
+        "np_runtime": 0.004928180840070126,
+        "torch_runtime": 0.002405424159951508
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 250,
+        "np_runtime": 0.004971562499995343,
+        "torch_runtime": 0.0023844124999595805
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 300,
+        "np_runtime": 0.004865425820025848,
+        "torch_runtime": 0.0024750958199729212
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 350,
+        "np_runtime": 0.005073885820020223,
+        "torch_runtime": 0.0025006933399708943
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 400,
+        "np_runtime": 0.005328353340009926,
+        "torch_runtime": 0.002355985000031069
+    },
+    {
+        "grid_size": 1100,
+        "resolution": 450,
+        "np_runtime": 0.005085624159983126,
+        "torch_runtime": 0.0024878824999905193
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 50,
+        "np_runtime": 0.0055141841599834155,
+        "torch_runtime": 0.002633540000097128
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 100,
+        "np_runtime": 0.0056621691600594205,
+        "torch_runtime": 0.002648557500069728
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 150,
+        "np_runtime": 0.006659843339875806,
+        "torch_runtime": 0.0027479549999407027
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 200,
+        "np_runtime": 0.005895093319995794,
+        "torch_runtime": 0.002643768340058159
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 250,
+        "np_runtime": 0.0058388241600187026,
+        "torch_runtime": 0.0026324766599282157
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 300,
+        "np_runtime": 0.005943364999984624,
+        "torch_runtime": 0.002621789160039043
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 350,
+        "np_runtime": 0.005393992500030436,
+        "torch_runtime": 0.0026206608199572656
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 400,
+        "np_runtime": 0.005457725839951308,
+        "torch_runtime": 0.0025853900000220166
+    },
+    {
+        "grid_size": 1150,
+        "resolution": 450,
+        "np_runtime": 0.0054615658400871325,
+        "torch_runtime": 0.0025804233399685473
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 50,
+        "np_runtime": 0.006066179999907035,
+        "torch_runtime": 0.002794856660038931
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 100,
+        "np_runtime": 0.006133085000037682,
+        "torch_runtime": 0.0027675991599971895
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 150,
+        "np_runtime": 0.00603643334005028,
+        "torch_runtime": 0.002779377499973634
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 200,
+        "np_runtime": 0.005830482500023208,
+        "torch_runtime": 0.002747805840044748
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 250,
+        "np_runtime": 0.005945233320089755,
+        "torch_runtime": 0.002870067499898141
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 300,
+        "np_runtime": 0.005836412499920698,
+        "torch_runtime": 0.0027625383199483622
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 350,
+        "np_runtime": 0.006094231660099468,
+        "torch_runtime": 0.0027673316799337044
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 400,
+        "np_runtime": 0.005953102500061504,
+        "torch_runtime": 0.0028176933199574707
+    },
+    {
+        "grid_size": 1200,
+        "resolution": 450,
+        "np_runtime": 0.005860452499910025,
+        "torch_runtime": 0.002824640820035711
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 50,
+        "np_runtime": 0.006826003340102034,
+        "torch_runtime": 0.0030531258399423677
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 100,
+        "np_runtime": 0.0062848116799432314,
+        "torch_runtime": 0.0030200983399117833
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 150,
+        "np_runtime": 0.006454816679906799,
+        "torch_runtime": 0.0030605108199233655
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 200,
+        "np_runtime": 0.006710629159933887,
+        "torch_runtime": 0.0030607099999906493
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 250,
+        "np_runtime": 0.006609147499984829,
+        "torch_runtime": 0.0029694591599400155
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 300,
+        "np_runtime": 0.006823725819995161,
+        "torch_runtime": 0.0030673858399677557
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 350,
+        "np_runtime": 0.010107652500009863,
+        "torch_runtime": 0.0030765050000627525
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 400,
+        "np_runtime": 0.008124535840033786,
+        "torch_runtime": 0.0031094091599516106
+    },
+    {
+        "grid_size": 1250,
+        "resolution": 450,
+        "np_runtime": 0.00748273249992053,
+        "torch_runtime": 0.0031657399999676272
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 50,
+        "np_runtime": 0.008162458339938894,
+        "torch_runtime": 0.0034599866598728113
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 100,
+        "np_runtime": 0.008074162499979139,
+        "torch_runtime": 0.003326948340109084
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 150,
+        "np_runtime": 0.008048642500070854,
+        "torch_runtime": 0.0033882058400195093
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 200,
+        "np_runtime": 0.00758122999992338,
+        "torch_runtime": 0.003234285840007942
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 250,
+        "np_runtime": 0.007364227500074776,
+        "torch_runtime": 0.0033782541600521653
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 300,
+        "np_runtime": 0.007937840840022546,
+        "torch_runtime": 0.0032614091799769086
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 350,
+        "np_runtime": 0.00764885915996274,
+        "torch_runtime": 0.00325271249996149
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 400,
+        "np_runtime": 0.007187969999940833,
+        "torch_runtime": 0.0032721833199320827
+    },
+    {
+        "grid_size": 1300,
+        "resolution": 450,
+        "np_runtime": 0.0069063249998725955,
+        "torch_runtime": 0.0033803933399030937
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 50,
+        "np_runtime": 0.008201066679903305,
+        "torch_runtime": 0.0035407441599818413
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 100,
+        "np_runtime": 0.008107587499980582,
+        "torch_runtime": 0.0034746958401228765
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 150,
+        "np_runtime": 0.008210301660001277,
+        "torch_runtime": 0.0034800341600202955
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 200,
+        "np_runtime": 0.007852080000011483,
+        "torch_runtime": 0.0035565900000801777
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 250,
+        "np_runtime": 0.007838858339964646,
+        "torch_runtime": 0.0035686666799301745
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 300,
+        "np_runtime": 0.007343890000047395,
+        "torch_runtime": 0.003544614159909543
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 350,
+        "np_runtime": 0.007867287499975647,
+        "torch_runtime": 0.003544569160003448
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 400,
+        "np_runtime": 0.00797826833993895,
+        "torch_runtime": 0.0035339541600842494
+    },
+    {
+        "grid_size": 1350,
+        "resolution": 450,
+        "np_runtime": 0.008274914159992477,
+        "torch_runtime": 0.0035370833399065303
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 50,
+        "np_runtime": 0.009196000840020133,
+        "torch_runtime": 0.0037453691600239838
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 100,
+        "np_runtime": 0.00820090084002004,
+        "torch_runtime": 0.0037433699998655357
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 150,
+        "np_runtime": 0.008739617500104942,
+        "torch_runtime": 0.0038539008199586534
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 200,
+        "np_runtime": 0.0077688391599804165,
+        "torch_runtime": 0.003804846679995535
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 250,
+        "np_runtime": 0.008473433339968323,
+        "torch_runtime": 0.0038947274998645297
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 300,
+        "np_runtime": 0.008972357499878854,
+        "torch_runtime": 0.003821261679986492
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 350,
+        "np_runtime": 0.009246827499882784,
+        "torch_runtime": 0.0038206708399229684
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 400,
+        "np_runtime": 0.008689834179967874,
+        "torch_runtime": 0.003787001659948146
+    },
+    {
+        "grid_size": 1400,
+        "resolution": 450,
+        "np_runtime": 0.008911509180034045,
+        "torch_runtime": 0.0040588616799504965
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 50,
+        "np_runtime": 0.008849093320022802,
+        "torch_runtime": 0.0040965733201301195
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 100,
+        "np_runtime": 0.009119264159962767,
+        "torch_runtime": 0.00405014667994692
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 150,
+        "np_runtime": 0.008560594160080655,
+        "torch_runtime": 0.004032219999935478
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 200,
+        "np_runtime": 0.008407487499935086,
+        "torch_runtime": 0.003982225840009051
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 250,
+        "np_runtime": 0.008718126680032584,
+        "torch_runtime": 0.0039312466599221805
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 300,
+        "np_runtime": 0.009191019160061842,
+        "torch_runtime": 0.0041316166600154245
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 350,
+        "np_runtime": 0.008669617499981542,
+        "torch_runtime": 0.004054130840086145
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 400,
+        "np_runtime": 0.008665312499942956,
+        "torch_runtime": 0.004088077500055079
+    },
+    {
+        "grid_size": 1450,
+        "resolution": 450,
+        "np_runtime": 0.008838479999976698,
+        "torch_runtime": 0.003967820000107167
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 50,
+        "np_runtime": 0.009919257500005187,
+        "torch_runtime": 0.004295933319954201
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 100,
+        "np_runtime": 0.009489652500051307,
+        "torch_runtime": 0.004322315000026719
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 150,
+        "np_runtime": 0.009124497500015422,
+        "torch_runtime": 0.004306417499901727
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 200,
+        "np_runtime": 0.009180691660003504,
+        "torch_runtime": 0.004151705000112998
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 250,
+        "np_runtime": 0.009246563319902635,
+        "torch_runtime": 0.004216570839926135
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 300,
+        "np_runtime": 0.010958733320003376,
+        "torch_runtime": 0.004252809159952449
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 350,
+        "np_runtime": 0.009675092499965104,
+        "torch_runtime": 0.0043408941599773244
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 400,
+        "np_runtime": 0.009579191660013748,
+        "torch_runtime": 0.0041690058399399274
+    },
+    {
+        "grid_size": 1500,
+        "resolution": 450,
+        "np_runtime": 0.00895420667991857,
+        "torch_runtime": 0.004277467500069179
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 50,
+        "np_runtime": 0.009701726660132408,
+        "torch_runtime": 0.004462612500065006
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 100,
+        "np_runtime": 0.010802040000125999,
+        "torch_runtime": 0.004571022500022082
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 150,
+        "np_runtime": 0.010348894179915078,
+        "torch_runtime": 0.004563209179905243
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 200,
+        "np_runtime": 0.009830922500113956,
+        "torch_runtime": 0.004460436659865081
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 250,
+        "np_runtime": 0.009881863339978736,
+        "torch_runtime": 0.004463889180042316
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 300,
+        "np_runtime": 0.009896770839986857,
+        "torch_runtime": 0.004483545839902945
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 350,
+        "np_runtime": 0.013464430820022244,
+        "torch_runtime": 0.004515889159956714
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 400,
+        "np_runtime": 0.00961467500004801,
+        "torch_runtime": 0.004505703320028261
+    },
+    {
+        "grid_size": 1550,
+        "resolution": 450,
+        "np_runtime": 0.009738240000006044,
+        "torch_runtime": 0.004511440819915152
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 50,
+        "np_runtime": 0.010253601659933338,
+        "torch_runtime": 0.004810512499971082
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 100,
+        "np_runtime": 0.010746804159862223,
+        "torch_runtime": 0.004919119160040282
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 150,
+        "np_runtime": 0.010685310840053718,
+        "torch_runtime": 0.004859094179992098
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 200,
+        "np_runtime": 0.010697591659991304,
+        "torch_runtime": 0.00475916249997681
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 250,
+        "np_runtime": 0.010249693340010708,
+        "torch_runtime": 0.004806335839966778
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 300,
+        "np_runtime": 0.010508514999964974,
+        "torch_runtime": 0.004822801659902325
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 350,
+        "np_runtime": 0.010432846659969073,
+        "torch_runtime": 0.0047638083400670436
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 400,
+        "np_runtime": 0.010227358319971245,
+        "torch_runtime": 0.0047617275000084195
+    },
+    {
+        "grid_size": 1600,
+        "resolution": 450,
+        "np_runtime": 0.010658754160103853,
+        "torch_runtime": 0.004790680000005523
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 50,
+        "np_runtime": 0.012265861659980146,
+        "torch_runtime": 0.004999047500023153
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 100,
+        "np_runtime": 0.011401137500070036,
+        "torch_runtime": 0.005043050819949713
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 150,
+        "np_runtime": 0.01098377000002074,
+        "torch_runtime": 0.005049496659921715
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 200,
+        "np_runtime": 0.011324707500025398,
+        "torch_runtime": 0.005121114180074073
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 250,
+        "np_runtime": 0.011294720000005327,
+        "torch_runtime": 0.005144861680018948
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 300,
+        "np_runtime": 0.011082306659955066,
+        "torch_runtime": 0.005107575000001816
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 350,
+        "np_runtime": 0.01091175833993475,
+        "torch_runtime": 0.00514205250001396
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 400,
+        "np_runtime": 0.012255683339899405,
+        "torch_runtime": 0.005032303339976352
+    },
+    {
+        "grid_size": 1650,
+        "resolution": 450,
+        "np_runtime": 0.011177909180114512,
+        "torch_runtime": 0.005097319159976905
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 50,
+        "np_runtime": 0.011797010000009323,
+        "torch_runtime": 0.005351912500045728
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 100,
+        "np_runtime": 0.011740866680047474,
+        "torch_runtime": 0.00532824249996338
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 150,
+        "np_runtime": 0.011723799159954069,
+        "torch_runtime": 0.005318397499941056
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 200,
+        "np_runtime": 0.011703346659924136,
+        "torch_runtime": 0.005355726679990767
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 250,
+        "np_runtime": 0.011881790000043111,
+        "torch_runtime": 0.005323751660034759
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 300,
+        "np_runtime": 0.01205525834011496,
+        "torch_runtime": 0.005330450000037672
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 350,
+        "np_runtime": 0.011634541660023388,
+        "torch_runtime": 0.005339024159911787
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 400,
+        "np_runtime": 0.012065843339951244,
+        "torch_runtime": 0.005313942499924451
+    },
+    {
+        "grid_size": 1700,
+        "resolution": 450,
+        "np_runtime": 0.012019325839937665,
+        "torch_runtime": 0.0054172783400281335
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 50,
+        "np_runtime": 0.012862286680028773,
+        "torch_runtime": 0.005518981680070283
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 100,
+        "np_runtime": 0.013066207499941812,
+        "torch_runtime": 0.005744658339972375
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 150,
+        "np_runtime": 0.012452897500043036,
+        "torch_runtime": 0.005646283319947543
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 200,
+        "np_runtime": 0.01259686834004242,
+        "torch_runtime": 0.005618613319966243
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 250,
+        "np_runtime": 0.012637309160054429,
+        "torch_runtime": 0.00553164500001003
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 300,
+        "np_runtime": 0.012522780840081396,
+        "torch_runtime": 0.0055869199999142435
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 350,
+        "np_runtime": 0.012387856660061515,
+        "torch_runtime": 0.0055748300001141615
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 400,
+        "np_runtime": 0.012475190839904827,
+        "torch_runtime": 0.005646828320022905
+    },
+    {
+        "grid_size": 1750,
+        "resolution": 450,
+        "np_runtime": 0.012427524160011671,
+        "torch_runtime": 0.005568181660055416
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 50,
+        "np_runtime": 0.01360440499993274,
+        "torch_runtime": 0.00590825332008535
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 100,
+        "np_runtime": 0.01333571249997476,
+        "torch_runtime": 0.00588339249996352
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 150,
+        "np_runtime": 0.012946272499975748,
+        "torch_runtime": 0.005863428320008097
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 200,
+        "np_runtime": 0.013523432500078343,
+        "torch_runtime": 0.005905473340098979
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 250,
+        "np_runtime": 0.013329139999987092,
+        "torch_runtime": 0.005952216660080012
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 300,
+        "np_runtime": 0.013436014159960905,
+        "torch_runtime": 0.005968645839893725
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 350,
+        "np_runtime": 0.013490047500090441,
+        "torch_runtime": 0.005855490819958504
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 400,
+        "np_runtime": 0.013452446660085115,
+        "torch_runtime": 0.005857555819966364
+    },
+    {
+        "grid_size": 1800,
+        "resolution": 450,
+        "np_runtime": 0.013166066679987124,
+        "torch_runtime": 0.005866270819969941
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 50,
+        "np_runtime": 0.014573412499885308,
+        "torch_runtime": 0.00621064999999362
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 100,
+        "np_runtime": 0.013788275840051939,
+        "torch_runtime": 0.006066146679950179
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 150,
+        "np_runtime": 0.014121648340078537,
+        "torch_runtime": 0.00613527081994107
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 200,
+        "np_runtime": 0.01372190000009141,
+        "torch_runtime": 0.006241993340081535
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 250,
+        "np_runtime": 0.014226516659982735,
+        "torch_runtime": 0.0062665624999499415
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 300,
+        "np_runtime": 0.014222248339938232,
+        "torch_runtime": 0.0062120775000948925
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 350,
+        "np_runtime": 0.014499864179961151,
+        "torch_runtime": 0.006267938340024557
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 400,
+        "np_runtime": 0.015172577499906765,
+        "torch_runtime": 0.006226269159960793
+    },
+    {
+        "grid_size": 1850,
+        "resolution": 450,
+        "np_runtime": 0.01526902750003501,
+        "torch_runtime": 0.0062593749999359715
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 50,
+        "np_runtime": 0.015343790839979192,
+        "torch_runtime": 0.006552627500059316
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 100,
+        "np_runtime": 0.01644514750005328,
+        "torch_runtime": 0.00671502668003086
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 150,
+        "np_runtime": 0.01648671999995713,
+        "torch_runtime": 0.006550140000035754
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 200,
+        "np_runtime": 0.015239307500014548,
+        "torch_runtime": 0.0066528308398847
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 250,
+        "np_runtime": 0.016388099159958074,
+        "torch_runtime": 0.006595207499922253
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 300,
+        "np_runtime": 0.015842585840000537,
+        "torch_runtime": 0.006501683340029558
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 350,
+        "np_runtime": 0.015074125840037596,
+        "torch_runtime": 0.006548255840025377
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 400,
+        "np_runtime": 0.015244023340055719,
+        "torch_runtime": 0.006637665000016568
+    },
+    {
+        "grid_size": 1900,
+        "resolution": 450,
+        "np_runtime": 0.014809973320079734,
+        "torch_runtime": 0.006463899160007713
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 50,
+        "np_runtime": 0.017907304179971106,
+        "torch_runtime": 0.006625377500022296
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 100,
+        "np_runtime": 0.016410515000025043,
+        "torch_runtime": 0.006921623319940408
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 150,
+        "np_runtime": 0.01659228667995194,
+        "torch_runtime": 0.006960287499969127
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 200,
+        "np_runtime": 0.016734958339948206,
+        "torch_runtime": 0.006915684160048841
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 250,
+        "np_runtime": 0.016519952499947976,
+        "torch_runtime": 0.0068057558400323615
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 300,
+        "np_runtime": 0.01588913750005304,
+        "torch_runtime": 0.006994589999958407
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 350,
+        "np_runtime": 0.017079528320027747,
+        "torch_runtime": 0.006859994179976638
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 400,
+        "np_runtime": 0.016228860000119312,
+        "torch_runtime": 0.006876309159997618
+    },
+    {
+        "grid_size": 1950,
+        "resolution": 450,
+        "np_runtime": 0.01652810584011604,
+        "torch_runtime": 0.006936170000117272
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 50,
+        "np_runtime": 0.016227861660008783,
+        "torch_runtime": 0.0070755674999963955
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 100,
+        "np_runtime": 0.016552473339979768,
+        "torch_runtime": 0.007097788320097606
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 150,
+        "np_runtime": 0.01647310665997793,
+        "torch_runtime": 0.007256010819983203
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 200,
+        "np_runtime": 0.017132978340086993,
+        "torch_runtime": 0.007172785000002477
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 250,
+        "np_runtime": 0.016405789159907726,
+        "torch_runtime": 0.0070365416599088345
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 300,
+        "np_runtime": 0.01636997749999864,
+        "torch_runtime": 0.0074695658199198075
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 350,
+        "np_runtime": 0.020325370840000686,
+        "torch_runtime": 0.007138257500046165
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 400,
+        "np_runtime": 0.016816462499991757,
+        "torch_runtime": 0.00720701584010385
+    },
+    {
+        "grid_size": 2000,
+        "resolution": 450,
+        "np_runtime": 0.01675604584001121,
+        "torch_runtime": 0.007140617499971995
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 50,
+        "np_runtime": 0.018055226680007763,
+        "torch_runtime": 0.007427703319990542
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 100,
+        "np_runtime": 0.018112268340046284,
+        "torch_runtime": 0.007487237500026822
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 150,
+        "np_runtime": 0.017783494999894175,
+        "torch_runtime": 0.007503883340104949
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 200,
+        "np_runtime": 0.019739174999995158,
+        "torch_runtime": 0.008456258339865599
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 250,
+        "np_runtime": 0.017226970819901908,
+        "torch_runtime": 0.007468343340005959
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 300,
+        "np_runtime": 0.017665249160054373,
+        "torch_runtime": 0.007483839180058567
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 350,
+        "np_runtime": 0.01724924583992106,
+        "torch_runtime": 0.007573425000009593
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 400,
+        "np_runtime": 0.017678107500105397,
+        "torch_runtime": 0.0075592808399233035
+    },
+    {
+        "grid_size": 2050,
+        "resolution": 450,
+        "np_runtime": 0.017206101659976412,
+        "torch_runtime": 0.007671943320019636
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 50,
+        "np_runtime": 0.019830528320017037,
+        "torch_runtime": 0.007867009159963346
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 100,
+        "np_runtime": 0.01893421499989927,
+        "torch_runtime": 0.007884104160038987
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 150,
+        "np_runtime": 0.018967977499996777,
+        "torch_runtime": 0.0077622666799288705
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 200,
+        "np_runtime": 0.019377794180036288,
+        "torch_runtime": 0.007829623340076069
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 250,
+        "np_runtime": 0.018432895000005375,
+        "torch_runtime": 0.007757366659934633
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 300,
+        "np_runtime": 0.018319370000099297,
+        "torch_runtime": 0.007833585000043967
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 350,
+        "np_runtime": 0.017830857500084677,
+        "torch_runtime": 0.007900739159958902
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 400,
+        "np_runtime": 0.018446260819910094,
+        "torch_runtime": 0.007806184179935371
+    },
+    {
+        "grid_size": 2100,
+        "resolution": 450,
+        "np_runtime": 0.018874397500039778,
+        "torch_runtime": 0.007828481679898686
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 50,
+        "np_runtime": 0.020490195839956867,
+        "torch_runtime": 0.008210573319956893
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 100,
+        "np_runtime": 0.019223306679923554,
+        "torch_runtime": 0.008135906660027104
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 150,
+        "np_runtime": 0.01992688668004121,
+        "torch_runtime": 0.008109701679932186
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 200,
+        "np_runtime": 0.021172732499981067,
+        "torch_runtime": 0.008196352499944624
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 250,
+        "np_runtime": 0.0198095574999752,
+        "torch_runtime": 0.008180040000006557
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 300,
+        "np_runtime": 0.019964363339968257,
+        "torch_runtime": 0.008349157500051661
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 350,
+        "np_runtime": 0.019370222500001547,
+        "torch_runtime": 0.008193964159872849
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 400,
+        "np_runtime": 0.01910692334000487,
+        "torch_runtime": 0.00822013833996607
+    },
+    {
+        "grid_size": 2150,
+        "resolution": 450,
+        "np_runtime": 0.019344988340017154,
+        "torch_runtime": 0.008117099160008365
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 50,
+        "np_runtime": 0.021299898339930224,
+        "torch_runtime": 0.00858276166007272
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 100,
+        "np_runtime": 0.020638414999993984,
+        "torch_runtime": 0.008618504159967415
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 150,
+        "np_runtime": 0.02068821749999188,
+        "torch_runtime": 0.008892829179967521
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 200,
+        "np_runtime": 0.019659004999994067,
+        "torch_runtime": 0.008592549179884373
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 250,
+        "np_runtime": 0.020142193339997904,
+        "torch_runtime": 0.008447359999991022
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 300,
+        "np_runtime": 0.020875554999947782,
+        "torch_runtime": 0.009006777499889722
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 350,
+        "np_runtime": 0.020099856680026278,
+        "torch_runtime": 0.008595930000010412
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 400,
+        "np_runtime": 0.020052011660009156,
+        "torch_runtime": 0.008454520840023178
+    },
+    {
+        "grid_size": 2200,
+        "resolution": 450,
+        "np_runtime": 0.020113235820026602,
+        "torch_runtime": 0.008448535819916288
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 50,
+        "np_runtime": 0.020880800820013975,
+        "torch_runtime": 0.008823821659898385
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 100,
+        "np_runtime": 0.021049919159995625,
+        "torch_runtime": 0.008858568339928753
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 150,
+        "np_runtime": 0.020868193339993013,
+        "torch_runtime": 0.008887530840002
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 200,
+        "np_runtime": 0.021158626660035224,
+        "torch_runtime": 0.009034664999926462
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 250,
+        "np_runtime": 0.02164539916004287,
+        "torch_runtime": 0.008848490819946164
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 300,
+        "np_runtime": 0.02061626417998923,
+        "torch_runtime": 0.00894292334007332
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 350,
+        "np_runtime": 0.020487107499939157,
+        "torch_runtime": 0.008955134179996094
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 400,
+        "np_runtime": 0.020917071660078362,
+        "torch_runtime": 0.008817665840033441
+    },
+    {
+        "grid_size": 2250,
+        "resolution": 450,
+        "np_runtime": 0.02096678250003606,
+        "torch_runtime": 0.009164257500087843
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 50,
+        "np_runtime": 0.021900765000027606,
+        "torch_runtime": 0.009213112500001444
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 100,
+        "np_runtime": 0.021844331659958697,
+        "torch_runtime": 0.009835116659960477
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 150,
+        "np_runtime": 0.02213095332001103,
+        "torch_runtime": 0.009167584999959217
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 200,
+        "np_runtime": 0.021453083320084262,
+        "torch_runtime": 0.009155159999936586
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 250,
+        "np_runtime": 0.02148076081997715,
+        "torch_runtime": 0.009246272500022315
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 300,
+        "np_runtime": 0.02206716749991756,
+        "torch_runtime": 0.009260965840076097
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 350,
+        "np_runtime": 0.02215336667999509,
+        "torch_runtime": 0.009308005839993711
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 400,
+        "np_runtime": 0.022590948340075558,
+        "torch_runtime": 0.009587959180062172
+    },
+    {
+        "grid_size": 2300,
+        "resolution": 450,
+        "np_runtime": 0.021815738339937524,
+        "torch_runtime": 0.009215612499974667
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 50,
+        "np_runtime": 0.023913190000021133,
+        "torch_runtime": 0.010125630839902443
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 100,
+        "np_runtime": 0.023562322500074517,
+        "torch_runtime": 0.01026001999998698
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 150,
+        "np_runtime": 0.02288487582001835,
+        "torch_runtime": 0.010127713340043556
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 200,
+        "np_runtime": 0.023272355840017554,
+        "torch_runtime": 0.00969552833994385
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 250,
+        "np_runtime": 0.02422012834009365,
+        "torch_runtime": 0.009880355000059354
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 300,
+        "np_runtime": 0.02402302000002237,
+        "torch_runtime": 0.010121454160107533
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 350,
+        "np_runtime": 0.023717862499906914,
+        "torch_runtime": 0.00970073668009718
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 400,
+        "np_runtime": 0.023259914179943733,
+        "torch_runtime": 0.009632194160076324
+    },
+    {
+        "grid_size": 2350,
+        "resolution": 450,
+        "np_runtime": 0.02370102999993833,
+        "torch_runtime": 0.009677050839964068
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 50,
+        "np_runtime": 0.025094325820100495,
+        "torch_runtime": 0.01060124249997898
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 100,
+        "np_runtime": 0.026239573339989875,
+        "torch_runtime": 0.010512250000028872
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 150,
+        "np_runtime": 0.024338966659997824,
+        "torch_runtime": 0.010351477499934845
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 200,
+        "np_runtime": 0.025299230840028032,
+        "torch_runtime": 0.010412450839939993
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 250,
+        "np_runtime": 0.023717432499979624,
+        "torch_runtime": 0.01051082750011119
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 300,
+        "np_runtime": 0.025465457499958575,
+        "torch_runtime": 0.010448736679973081
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 350,
+        "np_runtime": 0.023870818319992396,
+        "torch_runtime": 0.010563695839955471
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 400,
+        "np_runtime": 0.02372640583998873,
+        "torch_runtime": 0.010544900819950272
+    },
+    {
+        "grid_size": 2400,
+        "resolution": 450,
+        "np_runtime": 0.023831046679988505,
+        "torch_runtime": 0.01048860834009247
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 50,
+        "np_runtime": 0.02517560665990459,
+        "torch_runtime": 0.010778327500011073
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 100,
+        "np_runtime": 0.02476270917992224,
+        "torch_runtime": 0.010835193320090183
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 150,
+        "np_runtime": 0.024752768339967587,
+        "torch_runtime": 0.010889458320016275
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 200,
+        "np_runtime": 0.026004709160042695,
+        "torch_runtime": 0.010814594179973937
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 250,
+        "np_runtime": 0.025448105839896016,
+        "torch_runtime": 0.010762254160072189
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 300,
+        "np_runtime": 0.024835593320021873,
+        "torch_runtime": 0.010603594159911155
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 350,
+        "np_runtime": 0.02444933418009896,
+        "torch_runtime": 0.01099008249992039
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 400,
+        "np_runtime": 0.024657198339991738,
+        "torch_runtime": 0.010946929999918212
+    },
+    {
+        "grid_size": 2450,
+        "resolution": 450,
+        "np_runtime": 0.025270761660067365,
+        "torch_runtime": 0.010868960840016371
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 50,
+        "np_runtime": 0.028939413339976454,
+        "torch_runtime": 0.011950132499914617
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 100,
+        "np_runtime": 0.028503475000034088,
+        "torch_runtime": 0.011829120839975076
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 150,
+        "np_runtime": 0.027106549159943826,
+        "torch_runtime": 0.011683037500042702
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 200,
+        "np_runtime": 0.02938733000002685,
+        "torch_runtime": 0.011495500820019515
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 250,
+        "np_runtime": 0.027056634999898962,
+        "torch_runtime": 0.011684585000039079
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 300,
+        "np_runtime": 0.02771648583991919,
+        "torch_runtime": 0.01169600499997614
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 350,
+        "np_runtime": 0.027359149999974762,
+        "torch_runtime": 0.011460677499999293
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 400,
+        "np_runtime": 0.02760563750009169,
+        "torch_runtime": 0.01154799832002027
+    },
+    {
+        "grid_size": 2500,
+        "resolution": 450,
+        "np_runtime": 0.02749971999990521,
+        "torch_runtime": 0.011584335840016138
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 50,
+        "np_runtime": 0.02987488665996352,
+        "torch_runtime": 0.011708982500131242
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 100,
+        "np_runtime": 0.029766865839919773,
+        "torch_runtime": 0.012026391660037916
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 150,
+        "np_runtime": 0.028167165000049864,
+        "torch_runtime": 0.011749404160073028
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 200,
+        "np_runtime": 0.029773201659991172,
+        "torch_runtime": 0.012055096659896663
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 250,
+        "np_runtime": 0.03343857749991003,
+        "torch_runtime": 0.012356419160059886
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 300,
+        "np_runtime": 0.03791060832008952,
+        "torch_runtime": 0.016687919999967563
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 350,
+        "np_runtime": 0.03469272749993252,
+        "torch_runtime": 0.012984380819980289
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 400,
+        "np_runtime": 0.031629368319991046,
+        "torch_runtime": 0.01216399831988383
+    },
+    {
+        "grid_size": 2550,
+        "resolution": 450,
+        "np_runtime": 0.029535987499984914,
+        "torch_runtime": 0.012405088340019575
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 50,
+        "np_runtime": 0.032252095820003886,
+        "torch_runtime": 0.012288900819985429
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 100,
+        "np_runtime": 0.03183657582005253,
+        "torch_runtime": 0.012232762499916134
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 150,
+        "np_runtime": 0.03144830250006635,
+        "torch_runtime": 0.01312096334004309
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 200,
+        "np_runtime": 0.03625462999989395,
+        "torch_runtime": 0.013007963340060087
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 250,
+        "np_runtime": 0.03083417333997204,
+        "torch_runtime": 0.012495534159970702
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 300,
+        "np_runtime": 0.04031144000007771,
+        "torch_runtime": 0.017279503339959774
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 350,
+        "np_runtime": 0.03213498500001151,
+        "torch_runtime": 0.012764800820004894
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 400,
+        "np_runtime": 0.03045369418003247,
+        "torch_runtime": 0.013283969159965636
+    },
+    {
+        "grid_size": 2600,
+        "resolution": 450,
+        "np_runtime": 0.039278379159950416,
+        "torch_runtime": 0.013354035820084391
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 50,
+        "np_runtime": 0.038192269999999556,
+        "torch_runtime": 0.014054114159953314
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 100,
+        "np_runtime": 0.041315997500059896,
+        "torch_runtime": 0.017924683340097544
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 150,
+        "np_runtime": 0.03442991500007338,
+        "torch_runtime": 0.0128046350000659
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 200,
+        "np_runtime": 0.041064805839996554,
+        "torch_runtime": 0.018671054160076892
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 250,
+        "np_runtime": 0.039845705000043384,
+        "torch_runtime": 0.013034111680026399
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 300,
+        "np_runtime": 0.03241636668011779,
+        "torch_runtime": 0.013902467500010972
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 350,
+        "np_runtime": 0.042585970840009396,
+        "torch_runtime": 0.013215230839996366
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 400,
+        "np_runtime": 0.03615139831992565,
+        "torch_runtime": 0.014365485820017057
+    },
+    {
+        "grid_size": 2650,
+        "resolution": 450,
+        "np_runtime": 0.04641014084001654,
+        "torch_runtime": 0.017615734160062856
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 50,
+        "np_runtime": 0.03854081249999581,
+        "torch_runtime": 0.013548465839994606
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 100,
+        "np_runtime": 0.03661481917995843,
+        "torch_runtime": 0.01343157916009659
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 150,
+        "np_runtime": 0.03358067749999463,
+        "torch_runtime": 0.013535049999918556
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 200,
+        "np_runtime": 0.03627528915996663,
+        "torch_runtime": 0.012816138339985628
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 250,
+        "np_runtime": 0.03285094667997328,
+        "torch_runtime": 0.01276821667997865
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 300,
+        "np_runtime": 0.036910346679942446,
+        "torch_runtime": 0.013398370000068098
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 350,
+        "np_runtime": 0.03504198084003292,
+        "torch_runtime": 0.01306156499995268
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 400,
+        "np_runtime": 0.035409433340100806,
+        "torch_runtime": 0.013026058340037706
+    },
+    {
+        "grid_size": 2700,
+        "resolution": 450,
+        "np_runtime": 0.035401637500035575,
+        "torch_runtime": 0.013709168339992174
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 50,
+        "np_runtime": 0.046262490840017566,
+        "torch_runtime": 0.01537992667988874
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 100,
+        "np_runtime": 0.04998937915996066,
+        "torch_runtime": 0.015279345000017201
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 150,
+        "np_runtime": 0.04559491418011021,
+        "torch_runtime": 0.014523876680032117
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 200,
+        "np_runtime": 0.04049125750010717,
+        "torch_runtime": 0.016949985840037696
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 250,
+        "np_runtime": 0.04663502249997691,
+        "torch_runtime": 0.014305328339978586
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 300,
+        "np_runtime": 0.03620809999993071,
+        "torch_runtime": 0.013007591659988976
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 350,
+        "np_runtime": 0.04212260250002146,
+        "torch_runtime": 0.013649359160044696
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 400,
+        "np_runtime": 0.03731945833991631,
+        "torch_runtime": 0.013784960000048158
+    },
+    {
+        "grid_size": 2750,
+        "resolution": 450,
+        "np_runtime": 0.0404083924999577,
+        "torch_runtime": 0.01661903000000166
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 50,
+        "np_runtime": 0.04152707250003004,
+        "torch_runtime": 0.015490001659927657
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 100,
+        "np_runtime": 0.036045868340006566,
+        "torch_runtime": 0.013722011659992858
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 150,
+        "np_runtime": 0.03400464915990597,
+        "torch_runtime": 0.014311318340041908
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 200,
+        "np_runtime": 0.04394153916000505,
+        "torch_runtime": 0.014817452499992214
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 250,
+        "np_runtime": 0.04020755833989824,
+        "torch_runtime": 0.015428089999913937
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 300,
+        "np_runtime": 0.03782382083998528,
+        "torch_runtime": 0.014223508320137626
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 350,
+        "np_runtime": 0.03441041250000126,
+        "torch_runtime": 0.013759815840021474
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 400,
+        "np_runtime": 0.03267920667989529,
+        "torch_runtime": 0.01383648415998323
+    },
+    {
+        "grid_size": 2800,
+        "resolution": 450,
+        "np_runtime": 0.04652252999992925,
+        "torch_runtime": 0.017578677499986952
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 50,
+        "np_runtime": 0.03925899665991892,
+        "torch_runtime": 0.015672902499936754
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 100,
+        "np_runtime": 0.03967161334003322,
+        "torch_runtime": 0.01479625831998419
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 150,
+        "np_runtime": 0.054071636659937215,
+        "torch_runtime": 0.01666776750003919
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 200,
+        "np_runtime": 0.040436968339927264,
+        "torch_runtime": 0.01765460999988136
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 250,
+        "np_runtime": 0.03849812249987736,
+        "torch_runtime": 0.01527749415996368
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 300,
+        "np_runtime": 0.048348095819965235,
+        "torch_runtime": 0.01875895250006579
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 350,
+        "np_runtime": 0.04358061418010038,
+        "torch_runtime": 0.016664817499986384
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 400,
+        "np_runtime": 0.04521298834006302,
+        "torch_runtime": 0.015521925819921307
+    },
+    {
+        "grid_size": 2850,
+        "resolution": 450,
+        "np_runtime": 0.04084225915998104,
+        "torch_runtime": 0.017833969999919645
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 50,
+        "np_runtime": 0.05025404749991139,
+        "torch_runtime": 0.017297884180006804
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 100,
+        "np_runtime": 0.04341589000003296,
+        "torch_runtime": 0.017370899160014233
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 150,
+        "np_runtime": 0.046718397499935234,
+        "torch_runtime": 0.018464596660051028
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 200,
+        "np_runtime": 0.03949446333994274,
+        "torch_runtime": 0.01771938500009128
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 250,
+        "np_runtime": 0.06088514500006568,
+        "torch_runtime": 0.018649703340051928
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 300,
+        "np_runtime": 0.04750509916004376,
+        "torch_runtime": 0.01769516750006005
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 350,
+        "np_runtime": 0.03897375000000466,
+        "torch_runtime": 0.017262504999962403
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 400,
+        "np_runtime": 0.05476714333999553,
+        "torch_runtime": 0.02456618416006677
+    },
+    {
+        "grid_size": 2900,
+        "resolution": 450,
+        "np_runtime": 0.05831287166001857,
+        "torch_runtime": 0.020818202499940527
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 50,
+        "np_runtime": 0.05097837167995749,
+        "torch_runtime": 0.019035824180027704
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 100,
+        "np_runtime": 0.04304889582010219,
+        "torch_runtime": 0.01675394581994624
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 150,
+        "np_runtime": 0.04476174999988871,
+        "torch_runtime": 0.01752808750010445
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 200,
+        "np_runtime": 0.05306739499996183,
+        "torch_runtime": 0.017316215820028447
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 250,
+        "np_runtime": 0.042660406659997534,
+        "torch_runtime": 0.015862340820021928
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 300,
+        "np_runtime": 0.03976854749998893,
+        "torch_runtime": 0.016703447500040058
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 350,
+        "np_runtime": 0.04135171916001127,
+        "torch_runtime": 0.017324302500055636
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 400,
+        "np_runtime": 0.04755797749996418,
+        "torch_runtime": 0.0212195125001017
+    },
+    {
+        "grid_size": 2950,
+        "resolution": 450,
+        "np_runtime": 0.056647766679961936,
+        "torch_runtime": 0.0207792491800501
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 50,
+        "np_runtime": 0.06967829917994095,
+        "torch_runtime": 0.020075410840072437
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 100,
+        "np_runtime": 0.04180027167996741,
+        "torch_runtime": 0.01576812334009446
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 150,
+        "np_runtime": 0.0393283358401095,
+        "torch_runtime": 0.015720367500034627
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 200,
+        "np_runtime": 0.042799753339932065,
+        "torch_runtime": 0.020164864160033175
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 250,
+        "np_runtime": 0.044413388340035456,
+        "torch_runtime": 0.01830271418002667
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 300,
+        "np_runtime": 0.04405397416005144,
+        "torch_runtime": 0.016967234159965303
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 350,
+        "np_runtime": 0.04535108249998302,
+        "torch_runtime": 0.02165773500004434
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 400,
+        "np_runtime": 0.07216221833994496,
+        "torch_runtime": 0.021398374179989334
+    },
+    {
+        "grid_size": 3000,
+        "resolution": 450,
+        "np_runtime": 0.04166811584000243,
+        "torch_runtime": 0.016185741660010536
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 50,
+        "np_runtime": 0.0431051458400907,
+        "torch_runtime": 0.017226674999983517
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 100,
+        "np_runtime": 0.06740204832007293,
+        "torch_runtime": 0.026429120000102557
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 150,
+        "np_runtime": 0.05857524833991192,
+        "torch_runtime": 0.02077175250000437
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 200,
+        "np_runtime": 0.045000583340006416,
+        "torch_runtime": 0.018583811659918865
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 250,
+        "np_runtime": 0.04423152499992284,
+        "torch_runtime": 0.018025510820007185
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 300,
+        "np_runtime": 0.04496447415993316,
+        "torch_runtime": 0.01842653915999108
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 350,
+        "np_runtime": 0.046805690820037854,
+        "torch_runtime": 0.02020237583987182
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 400,
+        "np_runtime": 0.059724629999982425,
+        "torch_runtime": 0.022603383340028812
+    },
+    {
+        "grid_size": 3050,
+        "resolution": 450,
+        "np_runtime": 0.04540624249988468,
+        "torch_runtime": 0.01733387082000263
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 50,
+        "np_runtime": 0.04690063499991084,
+        "torch_runtime": 0.018302320840011817
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 100,
+        "np_runtime": 0.045333006659930106,
+        "torch_runtime": 0.017801636660005896
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 150,
+        "np_runtime": 0.044715255839983,
+        "torch_runtime": 0.017887317499989876
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 200,
+        "np_runtime": 0.04312164500006475,
+        "torch_runtime": 0.016842547499982173
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 250,
+        "np_runtime": 0.04134297084005084,
+        "torch_runtime": 0.017329132500017295
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 300,
+        "np_runtime": 0.04157927749998635,
+        "torch_runtime": 0.016817569160048153
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 350,
+        "np_runtime": 0.04250074334006058,
+        "torch_runtime": 0.01717680665999069
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 400,
+        "np_runtime": 0.04194906749995425,
+        "torch_runtime": 0.017214003339904593
+    },
+    {
+        "grid_size": 3100,
+        "resolution": 450,
+        "np_runtime": 0.042699430840002606,
+        "torch_runtime": 0.016925156659999628
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 50,
+        "np_runtime": 0.04530009582013008,
+        "torch_runtime": 0.018046939180057963
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 100,
+        "np_runtime": 0.04516705168003682,
+        "torch_runtime": 0.01759247333990061
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 150,
+        "np_runtime": 0.04570915418007644,
+        "torch_runtime": 0.018423143340041862
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 200,
+        "np_runtime": 0.0458381324999209,
+        "torch_runtime": 0.018380346659978387
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 250,
+        "np_runtime": 0.04462826000002679,
+        "torch_runtime": 0.018042632500000762
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 300,
+        "np_runtime": 0.043241071660013404,
+        "torch_runtime": 0.017634302499936895
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 350,
+        "np_runtime": 0.04539471918003983,
+        "torch_runtime": 0.017548279159964295
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 400,
+        "np_runtime": 0.042853800840093756,
+        "torch_runtime": 0.017860034159966745
+    },
+    {
+        "grid_size": 3150,
+        "resolution": 450,
+        "np_runtime": 0.04198643166004331,
+        "torch_runtime": 0.017729692499997327
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 50,
+        "np_runtime": 0.047592332499916665,
+        "torch_runtime": 0.018819076680083525
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 100,
+        "np_runtime": 0.04742752499994822,
+        "torch_runtime": 0.019044500820018583
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 150,
+        "np_runtime": 0.04649563582002884,
+        "torch_runtime": 0.01777914749996853
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 200,
+        "np_runtime": 0.04579452416001004,
+        "torch_runtime": 0.018432218340021792
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 250,
+        "np_runtime": 0.049563800000032646,
+        "torch_runtime": 0.017966190000006464
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 300,
+        "np_runtime": 0.04389546584003256,
+        "torch_runtime": 0.01789337167996564
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 350,
+        "np_runtime": 0.04549520000000484,
+        "torch_runtime": 0.01962801750007202
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 400,
+        "np_runtime": 0.04896020500003942,
+        "torch_runtime": 0.018477032499940833
+    },
+    {
+        "grid_size": 3200,
+        "resolution": 450,
+        "np_runtime": 0.0456476074999955,
+        "torch_runtime": 0.017896715000097173
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 50,
+        "np_runtime": 0.045271512499894015,
+        "torch_runtime": 0.018286117499956164
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 100,
+        "np_runtime": 0.04631328666000627,
+        "torch_runtime": 0.01831939918003627
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 150,
+        "np_runtime": 0.04599735583993606,
+        "torch_runtime": 0.01832862749986816
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 200,
+        "np_runtime": 0.04651628667998011,
+        "torch_runtime": 0.01935068834005506
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 250,
+        "np_runtime": 0.058316361680044795,
+        "torch_runtime": 0.02410917834000429
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 300,
+        "np_runtime": 0.04857431750002433,
+        "torch_runtime": 0.018385456659889315
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 350,
+        "np_runtime": 0.051566994180029725,
+        "torch_runtime": 0.019748107499908657
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 400,
+        "np_runtime": 0.052497648319986184,
+        "torch_runtime": 0.020102337499993156
+    },
+    {
+        "grid_size": 3250,
+        "resolution": 450,
+        "np_runtime": 0.047015814180049346,
+        "torch_runtime": 0.019139603320072637
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 50,
+        "np_runtime": 0.05101763415994356,
+        "torch_runtime": 0.019637320839974562
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 100,
+        "np_runtime": 0.049173845820041605,
+        "torch_runtime": 0.019277438319986687
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 150,
+        "np_runtime": 0.05048757833996206,
+        "torch_runtime": 0.019458901659963886
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 200,
+        "np_runtime": 0.053226540839968944,
+        "torch_runtime": 0.019746655820054002
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 250,
+        "np_runtime": 0.04784782665999956,
+        "torch_runtime": 0.019311120820057114
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 300,
+        "np_runtime": 0.04937595584007795,
+        "torch_runtime": 0.019169904160080478
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 350,
+        "np_runtime": 0.0487894233399129,
+        "torch_runtime": 0.019450599999981933
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 400,
+        "np_runtime": 0.050578134160023186,
+        "torch_runtime": 0.019696140000014566
+    },
+    {
+        "grid_size": 3300,
+        "resolution": 450,
+        "np_runtime": 0.047425755000003844,
+        "torch_runtime": 0.018845334999932673
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 50,
+        "np_runtime": 0.048630660839990014,
+        "torch_runtime": 0.01950964831994497
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 100,
+        "np_runtime": 0.047700957500055666,
+        "torch_runtime": 0.019622399159998166
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 150,
+        "np_runtime": 0.05230782750004437,
+        "torch_runtime": 0.020417926660011288
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 200,
+        "np_runtime": 0.049889717500045665,
+        "torch_runtime": 0.019274677500070538
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 250,
+        "np_runtime": 0.0521638549999625,
+        "torch_runtime": 0.01980662415997358
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 300,
+        "np_runtime": 0.04873853750003036,
+        "torch_runtime": 0.01963887249992695
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 350,
+        "np_runtime": 0.05362533999999869,
+        "torch_runtime": 0.020768885839934227
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 400,
+        "np_runtime": 0.05104093166009989,
+        "torch_runtime": 0.019790549999888753
+    },
+    {
+        "grid_size": 3350,
+        "resolution": 450,
+        "np_runtime": 0.048092219160025707,
+        "torch_runtime": 0.019354825839982367
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 50,
+        "np_runtime": 0.04850455834006425,
+        "torch_runtime": 0.0197245616800501
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 100,
+        "np_runtime": 0.04932993084003101,
+        "torch_runtime": 0.019804664160037646
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 150,
+        "np_runtime": 0.04854487834003521,
+        "torch_runtime": 0.02027569668003707
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 200,
+        "np_runtime": 0.04843203249998623,
+        "torch_runtime": 0.02005853750000824
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 250,
+        "np_runtime": 0.04831134416002897,
+        "torch_runtime": 0.020380260000092677
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 300,
+        "np_runtime": 0.04946410418007872,
+        "torch_runtime": 0.019816264160035645
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 350,
+        "np_runtime": 0.04802624415999162,
+        "torch_runtime": 0.020030415000073843
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 400,
+        "np_runtime": 0.047452522499952465,
+        "torch_runtime": 0.019905331679910886
+    },
+    {
+        "grid_size": 3400,
+        "resolution": 450,
+        "np_runtime": 0.04954389499995159,
+        "torch_runtime": 0.019698532499896827
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 50,
+        "np_runtime": 0.04951208749989746,
+        "torch_runtime": 0.020613023320038337
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 100,
+        "np_runtime": 0.0495742216600047,
+        "torch_runtime": 0.02049575166005525
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 150,
+        "np_runtime": 0.04974188334002974,
+        "torch_runtime": 0.02049631500005489
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 200,
+        "np_runtime": 0.0510062700000708,
+        "torch_runtime": 0.020631587499956368
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 250,
+        "np_runtime": 0.0508826274999592,
+        "torch_runtime": 0.020625414999958593
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 300,
+        "np_runtime": 0.0498584741599916,
+        "torch_runtime": 0.02059923166001681
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 350,
+        "np_runtime": 0.05133957333993749,
+        "torch_runtime": 0.02102091584005393
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 400,
+        "np_runtime": 0.05365862416001619,
+        "torch_runtime": 0.02061598500004038
+    },
+    {
+        "grid_size": 3450,
+        "resolution": 450,
+        "np_runtime": 0.049500180820032255,
+        "torch_runtime": 0.020500006660004146
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 50,
+        "np_runtime": 0.05388228499999968,
+        "torch_runtime": 0.020863740000058896
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 100,
+        "np_runtime": 0.05305076166012441,
+        "torch_runtime": 0.021364515000022948
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 150,
+        "np_runtime": 0.05258824333999655,
+        "torch_runtime": 0.02149544165993575
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 200,
+        "np_runtime": 0.05436929250005051,
+        "torch_runtime": 0.021771839160064702
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 250,
+        "np_runtime": 0.05316353750007693,
+        "torch_runtime": 0.02105232084009913
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 300,
+        "np_runtime": 0.05042028915995615,
+        "torch_runtime": 0.020904276660003232
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 350,
+        "np_runtime": 0.052210617499949874,
+        "torch_runtime": 0.021087180839967915
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 400,
+        "np_runtime": 0.052106990839965873,
+        "torch_runtime": 0.021246573340031317
+    },
+    {
+        "grid_size": 3500,
+        "resolution": 450,
+        "np_runtime": 0.05714520583991543,
+        "torch_runtime": 0.021814390000072306
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 50,
+        "np_runtime": 0.05342608999999356,
+        "torch_runtime": 0.02170615249997354
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 100,
+        "np_runtime": 0.05414078668007278,
+        "torch_runtime": 0.021732759180013092
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 150,
+        "np_runtime": 0.05263723084004596,
+        "torch_runtime": 0.021556027500046183
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 200,
+        "np_runtime": 0.05372930750003434,
+        "torch_runtime": 0.021460587500041584
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 250,
+        "np_runtime": 0.05331466333998833,
+        "torch_runtime": 0.02152701832004823
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 300,
+        "np_runtime": 0.052052176680008416,
+        "torch_runtime": 0.021515622500010066
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 350,
+        "np_runtime": 0.052531057500018505,
+        "torch_runtime": 0.021373945840023226
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 400,
+        "np_runtime": 0.053268694160069574,
+        "torch_runtime": 0.02181745084002614
+    },
+    {
+        "grid_size": 3550,
+        "resolution": 450,
+        "np_runtime": 0.05250754084001528,
+        "torch_runtime": 0.02167919665997033
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 50,
+        "np_runtime": 0.05441794916012441,
+        "torch_runtime": 0.022389508339983877
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 100,
+        "np_runtime": 0.05623611750008422,
+        "torch_runtime": 0.02249863083998207
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 150,
+        "np_runtime": 0.05765509499993641,
+        "torch_runtime": 0.022674223320063903
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 200,
+        "np_runtime": 0.05707903415997862,
+        "torch_runtime": 0.022497273339977256
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 250,
+        "np_runtime": 0.05613007082007243,
+        "torch_runtime": 0.02197414415990352
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 300,
+        "np_runtime": 0.05416136915999232,
+        "torch_runtime": 0.022058042499993463
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 350,
+        "np_runtime": 0.051780945819918996,
+        "torch_runtime": 0.022175493340037065
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 400,
+        "np_runtime": 0.05185777000006055,
+        "torch_runtime": 0.022294425839936592
+    },
+    {
+        "grid_size": 3600,
+        "resolution": 450,
+        "np_runtime": 0.05171623415997601,
+        "torch_runtime": 0.022193702499935172
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 50,
+        "np_runtime": 0.05279488333995687,
+        "torch_runtime": 0.023231509159959387
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 100,
+        "np_runtime": 0.05258902333996957,
+        "torch_runtime": 0.02289517249999335
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 150,
+        "np_runtime": 0.05204752584002563,
+        "torch_runtime": 0.022368220839998686
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 200,
+        "np_runtime": 0.0520363983399875,
+        "torch_runtime": 0.022720993339898996
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 250,
+        "np_runtime": 0.052789891659922435,
+        "torch_runtime": 0.02280751500002225
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 300,
+        "np_runtime": 0.05239287250005873,
+        "torch_runtime": 0.022941680000076303
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 350,
+        "np_runtime": 0.052605809999949994,
+        "torch_runtime": 0.02277116666009533
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 400,
+        "np_runtime": 0.052910125000053085,
+        "torch_runtime": 0.02295219250008813
+    },
+    {
+        "grid_size": 3650,
+        "resolution": 450,
+        "np_runtime": 0.061753267499880166,
+        "torch_runtime": 0.02459159999998519
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 50,
+        "np_runtime": 0.06056468415990821,
+        "torch_runtime": 0.023201554179977393
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 100,
+        "np_runtime": 0.055624257500021486,
+        "torch_runtime": 0.02328956167999422
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 150,
+        "np_runtime": 0.05850164749994292,
+        "torch_runtime": 0.023653251659998206
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 200,
+        "np_runtime": 0.060909677500021644,
+        "torch_runtime": 0.023995349159959004
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 250,
+        "np_runtime": 0.05615903499987326,
+        "torch_runtime": 0.023250172499974724
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 300,
+        "np_runtime": 0.05477995331995771,
+        "torch_runtime": 0.02604915082003572
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 350,
+        "np_runtime": 0.05955213584005833,
+        "torch_runtime": 0.023738143340015085
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 400,
+        "np_runtime": 0.061057173339941075,
+        "torch_runtime": 0.023657784160022857
+    },
+    {
+        "grid_size": 3700,
+        "resolution": 450,
+        "np_runtime": 0.05747322832001373,
+        "torch_runtime": 0.023623004180117278
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 50,
+        "np_runtime": 0.05884760750006535,
+        "torch_runtime": 0.023918454180093248
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 100,
+        "np_runtime": 0.059831209999974815,
+        "torch_runtime": 0.02415824249997968
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 150,
+        "np_runtime": 0.05815709249989595,
+        "torch_runtime": 0.024097270839993145
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 200,
+        "np_runtime": 0.05816102249998949,
+        "torch_runtime": 0.024024708340002688
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 250,
+        "np_runtime": 0.05756918750004843,
+        "torch_runtime": 0.024170862500031944
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 300,
+        "np_runtime": 0.05883644832007121,
+        "torch_runtime": 0.024105879999988245
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 350,
+        "np_runtime": 0.05783604334006668,
+        "torch_runtime": 0.024598419160029153
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 400,
+        "np_runtime": 0.058896118340053365,
+        "torch_runtime": 0.023937904159975005
+    },
+    {
+        "grid_size": 3750,
+        "resolution": 450,
+        "np_runtime": 0.057504815840075024,
+        "torch_runtime": 0.02407263082001009
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 50,
+        "np_runtime": 0.06785558415998821,
+        "torch_runtime": 0.028879533340077614
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 100,
+        "np_runtime": 0.07712448165999376,
+        "torch_runtime": 0.033788014159945305
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 150,
+        "np_runtime": 0.06652119834005134,
+        "torch_runtime": 0.025720283339906017
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 200,
+        "np_runtime": 0.07369937331997789,
+        "torch_runtime": 0.030715988320007454
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 250,
+        "np_runtime": 0.07460509834010737,
+        "torch_runtime": 0.026371901679958683
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 300,
+        "np_runtime": 0.0702693525000359,
+        "torch_runtime": 0.029005036679882322
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 350,
+        "np_runtime": 0.06285038250003709,
+        "torch_runtime": 0.02630270666006254
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 400,
+        "np_runtime": 0.07962518833999638,
+        "torch_runtime": 0.033614798320049884
+    },
+    {
+        "grid_size": 3800,
+        "resolution": 450,
+        "np_runtime": 0.07119505167996977,
+        "torch_runtime": 0.02727845333996811
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 50,
+        "np_runtime": 0.06311299500011955,
+        "torch_runtime": 0.02551803165988531
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 100,
+        "np_runtime": 0.0936252374999458,
+        "torch_runtime": 0.03057522916002199
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 150,
+        "np_runtime": 0.09847144665996893,
+        "torch_runtime": 0.03338546500002849
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 200,
+        "np_runtime": 0.09351647331990534,
+        "torch_runtime": 0.033425480000005336
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 250,
+        "np_runtime": 0.08583049999986542,
+        "torch_runtime": 0.02726413249998586
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 300,
+        "np_runtime": 0.06918762750006863,
+        "torch_runtime": 0.03168877584001166
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 350,
+        "np_runtime": 0.10036176334004267,
+        "torch_runtime": 0.03302948750002543
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 400,
+        "np_runtime": 0.08924926250008866,
+        "torch_runtime": 0.03111133667989634
+    },
+    {
+        "grid_size": 3850,
+        "resolution": 450,
+        "np_runtime": 0.062280006679939104,
+        "torch_runtime": 0.02624115332000656
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 50,
+        "np_runtime": 0.06865642584001762,
+        "torch_runtime": 0.027598776680097217
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 100,
+        "np_runtime": 0.0817513799999142,
+        "torch_runtime": 0.0303060208199895
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 150,
+        "np_runtime": 0.09898787834012182,
+        "torch_runtime": 0.035336768319975814
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 200,
+        "np_runtime": 0.09803535250001005,
+        "torch_runtime": 0.03573649665995617
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 250,
+        "np_runtime": 0.06783512081994558,
+        "torch_runtime": 0.026677190839982358
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 300,
+        "np_runtime": 0.08080310000004828,
+        "torch_runtime": 0.03423544584002229
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 350,
+        "np_runtime": 0.08531388083996717,
+        "torch_runtime": 0.029905526660004397
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 400,
+        "np_runtime": 0.07847562832001131,
+        "torch_runtime": 0.03538260168003035
+    },
+    {
+        "grid_size": 3900,
+        "resolution": 450,
+        "np_runtime": 0.08598078499999247,
+        "torch_runtime": 0.0385684466798557
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 50,
+        "np_runtime": 0.09727944250000292,
+        "torch_runtime": 0.03430486081997515
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 100,
+        "np_runtime": 0.09794042333989637,
+        "torch_runtime": 0.03520749834002345
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 150,
+        "np_runtime": 0.08973549916001503,
+        "torch_runtime": 0.03724550917992019
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 200,
+        "np_runtime": 0.09800523334008177,
+        "torch_runtime": 0.03689392500004032
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 250,
+        "np_runtime": 0.10283468749999884,
+        "torch_runtime": 0.03484263082005782
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 300,
+        "np_runtime": 0.0761647933399945,
+        "torch_runtime": 0.02972376165998867
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 350,
+        "np_runtime": 0.0985636424999393,
+        "torch_runtime": 0.03405790333999903
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 400,
+        "np_runtime": 0.08342240250000031,
+        "torch_runtime": 0.028462711659958586
+    },
+    {
+        "grid_size": 3950,
+        "resolution": 450,
+        "np_runtime": 0.07353925250004976,
+        "torch_runtime": 0.029253519180056173
+    }
+]
