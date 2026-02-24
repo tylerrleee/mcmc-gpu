@@ -44,7 +44,8 @@ Hardware:
 - Dimensions: ~2000x2000 grid at 500m resolution.
 
 - Configuration: 50,000 iterations.
-![mcmc_benmark](tests/viz/mcmc_benchmark_results.png)
+![mac_benmark](tests/viz/mcmc_benchmark_results.png)
+![mcmc_benmark](tests\viz\cuda_cpu_bm.png)
 
 # Setting Up the Environment
 1. Create and Activate Virtual Environment
