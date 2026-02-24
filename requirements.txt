@@ -1,0 +1,27 @@
+# requirements.txt equivalent of gstatsmcmc environment
+ipython
+ipython
+jupyterlab
+notebook
+ipywidgets
+numpy
+pandas
+geopandas
+shapely
+xarray
+scipy
+matplotlib
+scikit-learn
+scikit-gstat
+gstools
+verde
+pyproj
+tqdm
+cartopy
+pillow
+gstatsim
+matplotlib-scalebar
+torch
+torchvision
+
+ipykernel
