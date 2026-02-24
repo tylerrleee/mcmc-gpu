@@ -4,6 +4,8 @@
 Created on Thu Jun 26 16:57:24 2025
 
 @author: niyashao
+
+- Refactored LargeScaleChain with PyTorch calculations | @tylerrleee
 """
 
 ###import libraries
@@ -20,13 +22,19 @@ from tqdm.auto import tqdm
 from IPython import display
 import math
 import sys
+sys.path.append('..')
 import time
 
-from . import Topography
-from . import Utilities
-from . import gstatsim_custom as gsim
+from . import Topography_gpu
+from gstatsMCMC import Topography
+from gstatsMCMC import gstatsim_custom as gsim
 from copy import deepcopy
 import numbers
+
+import torch
+from typing import List, Dict
+
+
 
 def move_cursor_to_line(line_number):
     """Move cursor to specific line for updating in place"""
@@ -172,7 +180,195 @@ def sgs(xx, yy, grid, variogram, radius=100e3, num_points=20, ktype='ok', sim_ma
 
     return out_grid
 
+def make_circle_stencil_torch(x, rad):
+    """
+    Creates a circle mask on a grid, allowing GPU.
 
+    Args:
+        x (torch.Tensor): x-values of grid
+        rad (int, float): Radius of the circle
+
+    Returns:
+        numpy.ndarray: A 2D array with 1s inside the circle and 0s elsewhere.
+    """
+
+    dx      = torch.abs(x[1] - x[0])
+    ncells  = int(torch.ceil(rad / dx).item()) # return a number
+
+    steps: int =  2 * ncells + 1
+    x_stencil = torch.linspace(-rad, rad, steps, device = x.device) # match parameter's device
+
+    xx_st, yy_st = torch.meshgrid(x_stencil, x_stencil, indexing='xy')
+    
+    stencil = torch.sqrt(xx_st**2 + yy_st**2) < rad
+    
+    return stencil, xx_st, yy_st
+
+def _preprocess_torch(xx: torch.Tensor, yy: torch.Tensor, 
+                      grid: torch.Tensor, 
+                      variogram: dict, 
+                      radius: float,
+                      sim_mask: torch.Tensor = None, 
+                      stencil: torch.Tensor  = None):
+    """
+    Sequential Gaussian Simulation with ordinary or simple kriging using nearest neighbors found in an octant search.
+
+    Args:
+        xx (torch.Tensor): 2D array of x-coordinates.
+        yy (torch.Tensor): 2D array of y-coordinates.
+        grid (torch.Tensor): 2D array of simulation grid. NaN everywhere except for conditioning data.
+        variogram (dictionary): Variogram parameters. Must include, major_range, minor_range, sill, nugget, vtype.
+        sim_mask (torch.Tensor or None): Mask True where to do simulation. Default None will do whole grid.
+        radius (int, float): Minimum search radius for nearest neighbors. Default is 100 km.
+        stencil (torch.Tensor or None): Mask to use as 'cookie cutter' for nearest neighbor search.
+            Default None a circular stencil will be used.
+
+    Returns:
+        (out_grid, nst_trans, cond_msk, inds, vario, global_mean, stencil)
+    """
+    # keep device consistent
+    device = grid.device
+
+    # get masks and gaussian transform data
+    cond_msk = ~torch.isnan(grid)
+    out_grid = grid.clone()
+
+    # xx is a 2D array
+    x_width, x_height = xx.shape
+    
+    if sim_mask is None:
+        sim_mask = torch.full(size = (x_width, x_height), 
+                              fill_value = True,            # fill this mask with True booleans
+                              dtype  = torch.bool, 
+                              device = device)
+    
+    # get index coordinates and filter with sim_mask
+    ii, jj = torch.meshgrid(torch.arange(x_width, device=device), 
+                            torch.arange(x_height, device=device), 
+                            indexing='ij') # default step size 1
+    
+    to_convert: list = [ii[sim_mask], jj[sim_mask]]
+    inds             = torch.stack(to_convert, device=device, dim=1).to(torch.int32)
+
+    vario = deepcopy(variogram)
+
+    # turn scalar variogram parameters into grid
+    for key in vario:
+        if isinstance(vario[key], numbers.Number):
+            vario[key] = torch.full(grid.shape, vario[key], device=device, dtype=grid.dtype)
+
+    # mean of conditioning data for simple kriging
+    global_mean = torch.mean(out_grid[cond_msk])
+
+    # make stencil for faster nearest neighbor search
+    if stencil is None:
+        stencil, _, _ = make_circle_stencil_torch(xx[0,:], radius)
+
+    return out_grid, cond_msk, inds, vario, global_mean, stencil
+
+
+def sgs_torch(xx, yy, grid, variogram, radius=100e3, num_points=20, ktype='ok', sim_mask=None, quiet=False, stencil=None, rcond=None, seed=None):
+    """
+    
+    Sequential Gaussian Simulation using PyTorch
+    1. F(x) = y where y is standard normal 
+    - Transform data in standard normal distribution ('normal space')
+    2. get estimate, y
+    - At some point, perform kriging to get mean and corresponding kriging variance
+    3. Get residual, e
+    - Draw a random residual that follows a normal distribution w/ mean of 0.0 and variance of sigma^2
+    4. Y* Simulated value = kriged estimate + residual = y + e
+    5. Add Y* to the data to ensure the covariance w/ this value and all future predictions is correct
+    - Sequential Simulation use previously simulated value as data so 
+      we can reproduce the covariance across all Y*
+
+    Characteristics:
+    - All points are visited randomly (avoiding artifacts)
+    - Back-Transoform all data values & Y* when model is populated
+    - this method would be repeated with random number seed
+
+    Args:
+        xx (numpy.ndarray): 2D array of x-coordinates.
+        yy (numpy.ndarray): 2D array of y-coordinates.
+        grid (numpy.ndarray): 2D array of simulation grid. NaN everywhere except for conditioning data.
+        variogram (dictionary): Variogram parameters. Must include, major_range, minor_range, sill, nugget, vtype.
+        radius (int, float): Minimum search radius for nearest neighbors. Default is 100 km.
+        num_points (int): Number of nearest neighbors to find. Default is 20.
+        ktype (string): 'ok' for ordinary kriging or 'sk' for simple kriging. Default is 'ok'.
+        sim_mask (numpy.ndarray or None): Mask True where to do simulation. Default None will do whole grid.
+        quiet (book): Turn off progress bar when True. Default False.
+        stencil (numpy.ndarray or None): Mask to use as 'cookie cutter' for nearest neighbor search.
+            Default None a circular stencil will be used.
+        seed (int, None, or numpy.random.Generator): If None, a fresh random number generator (RNG)
+            will be created. If int, a RNG will be instantiated with that seed. If an instance of
+            RNG, that will be used.
+
+    Returns:
+        (numpy.ndarray): 2D simulation
+
+    """
+
+    # Check arguments. Throw errors
+    gsim.interpolate._sanity_checks(xx, yy, grid, variogram, radius, num_points, ktype, sim_mask)
+
+    # preprocess some grids and variogram parameters
+    out_grid, cond_msk, inds, vario, global_mean, stencil = _preprocess(xx, yy, grid, variogram, sim_mask, radius, stencil)
+
+    # make random number generator if not provided
+    rng = gsim.utilities.get_random_generator(seed)
+
+    # shuffle indices
+    rng.shuffle(inds)
+
+    ii, jj = np.meshgrid(np.arange(xx.shape[0]), np.arange(xx.shape[1]), indexing='ij')
+
+    # iterate over indicies
+    for k in range(inds.shape[0]):
+        
+        i, j = inds[k]
+
+        nearest = np.array([])
+        rad = radius
+        stenc = stencil
+
+        # check if grid cell needs to be simulated
+        if cond_msk[i, j] == False:
+            # make local variogram
+            local_vario = {}
+            for key in vario.keys():
+                if key=='vtype':
+                    local_vario[key] = vario[key]
+                else:
+                    local_vario[key] = vario[key][i,j]
+
+            # find nearest neighbors, increasing search distance if none are found
+            while nearest.shape[0] == 0:
+                nearest = gsim.neighbors.neighbors(i, j, ii, jj, xx, yy, out_grid, cond_msk, rad, num_points, stencil=stenc)
+                if nearest.shape[0] > 0:
+                    break
+                else:
+                    rad += 100e3
+                    stenc, _, _ = gsim.neighbors.make_circle_stencil(xx[0,:], rad)
+
+            # solve kriging equations
+            if ktype=='ok':
+                est, var = gsim._krige.ok_solve((xx[i,j], yy[i,j]), nearest, local_vario, rcond)
+            elif ktype=='sk':
+                est, var = gsim._krige.sk_solve((xx[i,j], yy[i,j]), nearest, local_vario, global_mean, rcond)
+
+            var = np.abs(var)
+
+            # put value in grid
+            # out_grid[i,j] = rng.normal(est, np.sqrt(var), 1)
+
+            out_grid[i,j] = rng.normal(est, np.sqrt(var), 1)
+            cond_msk[i,j] = True
+
+    #sim_trans = nst_trans.inverse_transform(out_grid.reshape(-1,1)).squeeze().reshape(xx.shape)
+
+    return out_grid
+
+    ...
 def spectral_synthesis_field(RF, shape, res=1.0):
     """
     Generate a 2D Gaussian random field using FFT-based spectral synthesis.
@@ -612,13 +808,12 @@ class RandField:
             cond_msk_edge[:,bwidth-1]=1
             
             # calculate the distance to block boundaries
-            dist = Utilities.min_dist_from_mask(xx, yy,cond_msk_edge==1)
-            # rescale the distance to be from 0 to 1, where any dist higher than maxdist is projected to 1
-            dist_rescale = np.where(dist>self.max_dist,1,(dist/self.max_dist))
-            # Use logistic function to map distance to a smoothly-changing weight
-            dist_logi = self.logistic_param[0]/(1+np.exp(-self.logistic_param[2]*(dist_rescale-self.logistic_param[1]))) - self.logistic_param[3]
-
-            edge_masks.append(dist_logi)
+            dist_edge = RandField.min_dist(np.where(cond_msk_edge==0, np.nan, 1), xx, yy)
+            # re-scale the distance by the maximum correlation distance
+            dist_rescale_edge = RandField.rescale(dist_edge, self.max_dist)
+            # calculate the logistic function
+            dist_logi_edge = RandField.logistic(dist_rescale_edge, self.logistic_param[0], self.logistic_param[1], self.logistic_param[2]) - self.logistic_param[3]
+            edge_masks.append(dist_logi_edge)
 
         return edge_masks
     
@@ -686,6 +881,37 @@ class RandField:
 
         return fields[0,:,:]
     
+    def min_dist(hard_mat, xx, yy):
+        """
+        Compute the minimum Euclidean distance to non-NaN points.
+        
+        Notes: This is an internal helper function and not intended for direct use.
+        """
+        dist = np.zeros(xx.shape)
+        xx_hard = np.where(np.isnan(hard_mat), np.nan, xx)
+        yy_hard = np.where(np.isnan(hard_mat), np.nan, yy)
+        
+        for i in range(xx.shape[0]):
+            for j in range(xx.shape[1]):
+                dist[i,j] = np.nanmin(np.sqrt(np.square(yy[i,j]-yy_hard)+np.square(xx[i,j]-xx_hard)))
+        return dist
+
+    def rescale(x, maxdist):
+        """
+        Rescale distance values by the specified maximum distance.
+        
+        Notes: This is an internal helper function and not intended for direct use.
+        """
+        return np.where(x>maxdist,1,(x/maxdist))
+
+    def logistic(x, L, x0, k):
+        """
+        Evaluate the logistic function with given parameters.
+        
+        Notes: is an internal helper function and not intended for direct use.
+        """
+        return L/(1+np.exp(-k*(x-x0)))
+    
     def get_crf_weight(self,xx,yy,cond_data_mask):
         """
         This method generates weights for a conditional random field using a mask showing locations of the conditioning data. 
@@ -702,13 +928,13 @@ class RandField:
             dist_logi (np.ndarray): 2D array. The raw output of the logistic function applied to the rescaled distances.
         """
         logistic_param = self.logistic_param
-        maxdist = self.max_dist
+        max_dist = self.max_dist
         # calculate the distance to block boundaries
-        dist = Utilities.min_dist_from_mask(xx, yy, cond_data_mask==1)
-        # re-scale the distance by the maximum correlation distance, such that the rescaled distance ranges between 0 to 1, where any dist higher than maxdist is projected to 1
-        dist_rescale = np.where(dist>maxdist,1,(dist/maxdist))
-        # Use logistic function to map distance to a smoothly-changing weight
-        dist_logi = logistic_param[0]/(1+np.exp(-logistic_param[2]*(dist_rescale-logistic_param[1]))) - logistic_param[3]
+        dist = RandField.min_dist(np.where(cond_data_mask==0, np.nan, 1), xx, yy)
+        # re-scale the distance by the maximum correlation distance
+        dist_rescale = RandField.rescale(dist, max_dist)
+        # calculate the logistic function
+        dist_logi = RandField.logistic(dist_rescale, logistic_param[0], logistic_param[1], logistic_param[2]) - logistic_param[3]
 
         weight = dist_logi - np.min(dist_logi)
         return weight, dist, dist_rescale, dist_logi
@@ -730,11 +956,9 @@ class RandField:
             dist_logi (np.ndarray): 2D array. The raw output of the logistic function applied to the rescaled distances.
         """
         logistic_param = self.logistic_param
-        maxdist = self.max_dist
-        # rescale the distance to be from 0 to 1, where any dist higher than maxdist is projected to 1
-        dist_rescale = np.where(dist>maxdist,1,(dist/maxdist))
-        # Use logistic function to map distance to a smoothly-changing weight
-        dist_logi = logistic_param[0]/(1+np.exp(-logistic_param[2]*(dist_rescale-logistic_param[1]))) - logistic_param[3]
+        max_dist = self.max_dist
+        dist_rescale = RandField.rescale(dist, max_dist)
+        dist_logi = RandField.logistic(dist_rescale, logistic_param[0], logistic_param[1], logistic_param[2]) - logistic_param[3]
 
         weight = dist_logi - np.min(dist_logi)
         return weight, dist, dist_rescale, dist_logi
@@ -1042,6 +1266,7 @@ class chain:
         loss_data = 0
         
         return loss_mc + loss_data, loss_mc, loss_data
+
     
     def set_random_generator(self, rng_seed = None):
         """
@@ -1134,8 +1359,88 @@ class chain_crf(chain):
         self.crf_data_weight = crf_weight
 
 
+    def _to_tensor(self, device=None):
+        """
+        Converts all Numpy array parameters initialized in the parent 'chain' class 
+        and the child 'chain_crf' class to PyTorch tensors (float32)
+
+        """        
+
+        def convert(arr, dataType = torch.float32):
+            """ 
+            Helper ; convert ndarray to tensor w/ checks
+            
+            Default dtype: torch.float32 
+            - Pytorch support for Apple Mac Silicon *MPS* only works w/ float32
+            """
+            if arr is not None and isinstance(arr, np.ndarray):
+                return torch.tensor(arr, dtype = dataType, device = self.device)
+            return arr
+
+        # Convert parent class (chain) base arrays
+        # Reference __init__ for parameters details
+
+        self.xx             = convert(self.xx)
+        self.yy             = convert(self.yy)
+        self.initial_bed    = convert(self.initial_bed)
+        self.surf           = convert(self.surf)
+        self.velx           = convert(self.velx)
+        self.vely           = convert(self.vely)
+        self.dhdt           = convert(self.dhdt)
+        self.smb            = convert(self.smb)
+        self.cond_bed       = convert(self.cond_bed)
+        self.data_mask      = convert(self.data_mask)
+        self.grounded_ice_mask = convert(self.grounded_ice_mask)
+        
+        # self.resolution is intentionally left as a standard float
+        # torch.gradient() expects a float/tuple of floats for the spacing argument
+        if isinstance(self.resolution, (int, float)):
+            self.resolution = float(self.resolution)
+
+        # Convert dynamically assigned parent class (chain) arrays
+        if hasattr(self, 'region_mask'):
+            self.region_mask = convert(self.region_mask)
+        if hasattr(self, 'mc_region_mask'):
+            self.mc_region_mask = convert(self.mc_region_mask)
+        if hasattr(self, 'sample_loc'):
+            self.sample_loc = convert(self.sample_loc)
+            
+        # Convert child class (chain_crf) specific arrays
+        if hasattr(self, 'crf_data_weight'):
+            self.crf_data_weight = convert(self.crf_data_weight)
+            
+        if hasattr(self, 'initial_bed'):
+            self.initial_bed = convert(self.initial_bed)
+        print(f"\n data converted to tensors on {self.device}")
+
+        # Tensor Loss helper
+    def _loss_tensor(self, mc_res: torch.Tensor):
+        """
+            Compute scalar loss values staying on GPU.
+
+            Returns three plain Python floats so they can be stored in the
+            cache tensors and used in the Markov Chain acceptance test without
+            any device synchronisation penalty.
+        """
+        region_vals = mc_res[self.mc_region_mask == 1]
+        loss_mc   = torch.nansum(region_vals ** 2) / (2.0 * self.sigma_mc ** 2)
+
+        loss_data = torch.tensor(0.0, dtype=mc_res.dtype, device=mc_res.device)
+        total     = loss_mc + loss_data
+        return total, loss_mc, loss_data
+    
+    def _set_torch_device(self):
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
+        
+        self.device = device
+
     def run(self, n_iter, RF, only_save_last_bed=False, info_per_iter = 1000, plot=True, progress_bar=True):
-        """Runs the MCMC sampling chain to generate topography realizations.
+        """Runs the MCMC sampling chain to generate topography realizations using PyTorch on GPU
 
         Args:
             n_iter (int): The total number of MCMC iterations to perform.
@@ -1145,8 +1450,8 @@ class chain_crf(chain):
             info_per_iter (int): The iteration interval for printing progress updates, such as loss and acceptance rate, to the console.
 
         Returns:
-            bed_cache (np.ndarray): A 4D array of saved topographies if `only_save_last_bed` is False, or a 2D array of the final topography if True.
-            loss_mc_cache (np.ndarray): A 1D array of the mass conservation loss at each iteration. If no mass conservation loss is set, will return zeros.
+            bed_cache (Tensor): A 4D array of saved topographies if `only_save_last_bed` is False, or a 2D array of the final topography if True.
+            loss_mc_cache (Tensor): A 1D array of the mass conservation loss at each iteration. If no mass conservation loss is set, will return zeros.
             loss_data_cache (np.ndarray): A 1D array of the data misfit loss at each iteration. If no data misfit loss is set, will return zeros.
             loss_cache (np.ndarray): A 1D array of the total loss (mass conservation loss + data misfit loss) at each iteration.
             step_cache (np.ndarray): A 1D boolean array indicating whether the proposal was accepted at each iteration.
@@ -1157,254 +1462,266 @@ class chain_crf(chain):
         rng = self.rng
         
         if not isinstance(RF, RandField):
-            raise TypeError('The arugment "RF" has to be an object of the class RandField')
+            raise TypeError('The argument "RF" has to be an object of the class RandField')
         
-        # initialize storage
-        loss_mc_cache = np.zeros(n_iter)
-        loss_data_cache = np.zeros(n_iter)
-        loss_cache = np.zeros(n_iter)
-        step_cache = np.zeros(n_iter)
+        self._set_torch_device()
+
+        dev   = self.device          # torch.device – cuda / mps / cpu
+        dtype = torch.float32        # MPS only supports float32
+
+        # Convert all parameters to tensors if not already
+        self._to_tensor(device=dev)
+        H, W = self.xx.shape
+
+        # cache tensors
+        loss_mc_cache_t   = torch.zeros(n_iter, dtype=dtype, device=dev)
+        loss_data_cache_t = torch.zeros(n_iter, dtype=dtype, device=dev)
+        loss_cache_t      = torch.zeros(n_iter, dtype=dtype, device=dev)
+        step_cache_t      = torch.zeros(n_iter, dtype=torch.bool, device=dev)
+        resampled_times_t = torch.zeros((H, W), dtype=dtype, device=dev)
+        blocks_cache_t    = torch.full((n_iter, 4), float('nan'), dtype=dtype, device=dev)
+
         if not only_save_last_bed:
-            bed_cache = np.zeros((n_iter, self.xx.shape[0], self.xx.shape[1]))
-        blocks_cache = np.full((n_iter, 4), np.nan)
-        resampled_times = np.zeros(self.xx.shape)
+            bed_cache_t = torch.zeros((n_iter, H, W), dtype=dtype, device=dev)
         
         # if the user request to return bed elevation in some sampling locations
-        if not (self.sample_loc is None):
-            sample_values = np.zeros((self.sample_loc.shape[0], n_iter))
-            
-            # convert sample_loc from x and y locations to i and j indexes
-            sample_loc_ij = np.zeros(self.sample_loc.shape, dtype=np.int16)
-            for k in range(self.sample_loc.shape[0]):
-                sample_i,sample_j = np.where((self.xx == self.sample_loc[k,0]) & (self.yy == self.sample_loc[k,1]))
-                sample_loc_ij[k,:] = [int(sample_i[0]), int(sample_j[0])]
-                
-            sample_values[:,0] = self.initial_bed[sample_loc_ij[:,0],sample_loc_ij[:,1]]
-        
-        bed_c = self.initial_bed
+        # Sample point trackng
+        track_samples = self.sample_loc is not None
+        if track_samples:
+            sample_loc_t  = self.sample_loc                       # (K, 2) float tensor
+            K             = sample_loc_t.shape[0]
+            sample_vals_t = torch.zeros((K, n_iter), dtype=dtype, device=dev)
 
-        resolution = self.resolution
-        
-        # initialize loss
-        mc_res = Topography.get_mass_conservation_residual(bed_c, self.surf, self.velx, self.vely, self.dhdt, self.smb, resolution)
-        data_diff = bed_c - self.cond_bed
-        loss_prev, loss_prev_mc, loss_prev_data = self.loss(mc_res,data_diff)
+            # Convert (x, y) sample locations → (i, j) grid indices (on GPU)
+            xx_flat = self.xx.flatten()          # (H*W,)
+            yy_flat = self.yy.flatten()
+            sample_loc_ij_t = torch.zeros((K, 2), dtype=torch.long, device=dev)
+            for k in range(K):
+                match = (xx_flat == sample_loc_t[k, 0]) & (yy_flat == sample_loc_t[k, 1])
+                flat_idx = match.nonzero(as_tuple=False)[0, 0]
+                sample_loc_ij_t[k, 0] = flat_idx // W
+                sample_loc_ij_t[k, 1] = flat_idx %  W
 
-        loss_cache[0] = loss_prev
-        loss_data_cache[0] = loss_prev_data
-        loss_mc_cache[0] = loss_prev_mc
-        step_cache[0] = False
+            sample_vals_t[:, 0] = self.initial_bed[
+                sample_loc_ij_t[:, 0], sample_loc_ij_t[:, 1]
+            ]
+
+        # Working Tensors
+        bed_c = self.initial_bed.clone() # (H, W) tensor on dev
+        resolution: float = self.resolution    # Float
+        
+
+        # Initialize loss
+        mc_res = Topography_gpu.get_mass_conservation_residual_torch( 
+            bed_c, self.surf, self.velx, self.vely, self.dhdt, self.smb, self.resolution
+            ) # -> (H, W) tensor
+        
+        loss_prev, loss_prev_mc, loss_prev_data = self._loss_tensor(mc_res)
+
+        loss_cache_t[0]      = loss_prev
+        loss_mc_cache_t[0]   = loss_prev_mc
+        loss_data_cache_t[0] = loss_prev_data
+        step_cache_t[0]      = False
+
         if not only_save_last_bed:
-            bed_cache[0] = bed_c
+            bed_cache_t[0] = bed_c
         
-        #crf_weight = self.crf_data_weight
-
+        # Live plot -- using matplotlib on CPU
         if plot:
-            fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(12,5))
-            (line_loss,) = ax_loss.plot([], [], color='tab:blue', label='Loss')
-            (line_acc,)  = ax_acc.plot([], [], color='tab:green', label='Acceptance Rate')
-            #NOTE use get_mass_conservation_residual on BedMachine data
-            # bm_loss = 
-            # ax_loss.axhline(bm_loss, ls='--', label='BedMachine loss') 
-            
-            ax_loss.set_xlabel("Iteration")
-            ax_loss.set_ylabel("Loss")
-            ax_loss.set_title("MCMC Loss")
-
-            ax_acc.set_xlabel("Iteration")
-            ax_acc.set_ylabel("Acceptance Rate (%)")
-            ax_acc.set_ylim(0, 100)
-            ax_acc.set_title("MCMC Acceptance Rate")
-
-            ax_loss.legend()
+            fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(12, 5))
+            (line_loss,) = ax_loss.plot([], [], color='tab:blue',  label='Loss')
+            (line_acc,)  = ax_acc.plot([], [],  color='tab:green', label='Acceptance Rate')
+            ax_loss.set_xlabel("Iteration"); ax_loss.set_ylabel("Loss")
+            ax_loss.set_title("MCMC Loss");  ax_loss.legend()
+            ax_acc.set_xlabel("Iteration");  ax_acc.set_ylabel("Acceptance Rate (%)")
+            ax_acc.set_ylim(0, 100);         ax_acc.set_title("MCMC Acceptance Rate")
             ax_acc.legend()
-            
             display_handle = display.display(fig, display_id=True)
             plt.tight_layout()
 
-        # Track acceptance rate
+
+        # PRogress setup
         accepted_count = 0
         acceptance_rates = []
 
-        if progress_bar == True:
-            chain_id = getattr(self, 'chain_id', 0)
-            seed = getattr(self, 'seed', 'Unknown')
-            tqdm_position = getattr(self, 'tqdm_position', 0)
+        chain_id      = getattr(self, 'chain_id', 0)
+        seed          = getattr(self, 'seed', 'Unknown')
+        tqdm_position = getattr(self, 'tqdm_position', 0)
 
+        if progress_bar:
             iterator = tqdm(range(1, n_iter),
                             desc=f'Chain {chain_id} | Seed {seed}',
                             position=tqdm_position,
                             leave=True)
         else:
-            iterator = range(1,n_iter)
+            iterator   = range(1, n_iter)
+            output_line = tqdm_position + 2
 
-            chain_id = getattr(self, 'chain_id', 'Unknown')
-            output_line = getattr(self, 'tqdm_position', 0) + 2 # Reserve first line for header
-            seed = getattr(self, 'seed', 'Unknown')
-            
         iter_start_time = time.time()
-        #pbar = tqdm(range(1,n_iter))
+
+        # Ensure that this is ndarray to ensure no sync from GPU to CPU is happening
+        region_mask_np = self.region_mask.cpu().numpy()  
+
         for i in iterator:
-                        
-            f = RF.get_rfblock()
-            block_size = f.shape
+
+            ## Potentially conerting to tensor native rfblock   
+            f_np     = RF.get_rfblock()                          # (bx, by) ndarray
+            f_t      = torch.tensor(f_np, dtype=dtype, device=dev)
+            block_size = f_t.shape                               # (bx, by)
             
-            # determine the location of the block
+            # Sample block location
             if self.update_in_region:
                 while True:
-                    indexx = rng.integers(low=0, high=bed_c.shape[0], size=1)[0]
-                    indexy = rng.integers(low=0, high=bed_c.shape[1], size=1)[0]
-                    if self.region_mask[indexx,indexy] == 1:
+                    indexx = int(rng.integers(0, H))
+                    indexy = int(rng.integers(0, W))
+                    if region_mask_np[indexx, indexy] == 1: # Must be a numpy based mask, not GPU
                         break
             else:
-                indexx = rng.integers(low=0, high=bed_c.shape[0], size=1)[0]
-                indexy = rng.integers(low=0, high=bed_c.shape[1], size=1)[0]
+                indexx = int(rng.integers(0, H))
+                indexy = int(rng.integers(0, W))
                 
             #record block
-            blocks_cache[i,:]=[indexx,indexy,block_size[0],block_size[1]]
-
+            blocks_cache_t[i] = torch.tensor(
+                            [indexx, indexy, block_size[0], block_size[1]],
+                            dtype=dtype, device=dev
+                        )
+            
             #find the index of the block side, make sure the block is within the edge of the map
-            bxmin = np.max((0,int(indexx-block_size[0]/2)))
-            bxmax = np.min((bed_c.shape[0],int(indexx+block_size[0]/2)))
-            bymin = np.max((0,int(indexy-block_size[1]/2)))
-            bymax = np.min((bed_c.shape[1],int(indexy+block_size[1]/2)))
-            
-            #find the index of the block side in the coordinate of the block
-            mxmin = np.max([block_size[0]-bxmax,0])
-            mxmax = np.min([bed_c.shape[0]-bxmin,block_size[0]])
-            mymin = np.max([block_size[1]-bymax,0])
-            mymax = np.min([bed_c.shape[1]-bymin,block_size[1]])
-            
-            #perturb
-            if self.block_type == 'CRF_weight': # weighted random field perturbation
-                perturb = f[mxmin:mxmax,mymin:mymax]*self.crf_data_weight[bxmin:bxmax,bymin:bymax]
-            else: #random field perturbation
-                perturb = f[mxmin:mxmax,mymin:mymax]
+            bxmin = max(0,  indexx - block_size[0] // 2)
+            bxmax = min(H,  indexx + block_size[0] // 2)
+            bymin = max(0,  indexy - block_size[1] // 2)
+            bymax = min(W,  indexy + block_size[1] // 2)
 
-            bed_next = bed_c.copy()
-            bed_next[bxmin:bxmax,bymin:bymax]=bed_next[bxmin:bxmax,bymin:bymax] + perturb
+            # Corresponding slice into the random-field block itself
+            mxmin = max(block_size[0] - bxmax, 0)
+            mxmax = min(H - bxmin, block_size[0])
+            mymin = max(block_size[1] - bymax, 0)
+            mymax = min(W - bymin, block_size[1])
             
-            if self.update_in_region:
-                bed_next = np.where(self.region_mask, bed_next, bed_c)
+            # Find block perturbation -- GPU operations
+            if self.block_type == 'CRF_weight':
+                perturb = (f_t[mxmin:mxmax, mymin:mymax]
+                           * self.crf_data_weight[bxmin:bxmax, bymin:bymax])
             else:
-                bed_next = np.where(self.grounded_ice_mask, bed_next, bed_c)
+                perturb = f_t[mxmin:mxmax, mymin:mymax]
+
+            bed_next = bed_c.clone()
+            bed_next[bxmin:bxmax, bymin:bymax] = bed_c[bxmin:bxmax, bymin:bymax] + perturb
+
+            # Restrict update to region / grounded ice mask
+            if self.update_in_region:
+                bed_next = torch.where(self.region_mask.bool(), bed_next, bed_c)
+            else:
+                bed_next = torch.where(self.grounded_ice_mask.bool(), bed_next, bed_c)
+
+
 
             # Define Padded Block to solve gradient & mass conservation residual (MSR)
-            pad = 1 
-            c_xmin = np.max([0, bxmin - pad])              # neighbor to the left boundary
-            c_xmax = np.min([bed_c.shape[0], bxmax + pad]) # neighbor to the right boundary
-            c_ymin = np.max([0, bymin - pad])              # neighbor to the lower boundary
-            c_ymax = np.min([bed_c.shape[1], bymax + pad]) # neighbor to the upper boundary
+            pad   = 1
+            c_xmin = max(0, bxmin - pad)
+            c_xmax = min(H, bxmax + pad)
+            c_ymin = max(0, bymin - pad)
+            c_ymax = min(W, bymax + pad)
 
-            # Define the BLOCK index to compute MSR -- which needs neighbors for np.gradient
-            local_bed = bed_next[c_xmin:c_xmax, c_ymin:c_ymax]
-            local_surf = self.surf[c_xmin:c_xmax, c_ymin:c_ymax]
-            local_velx = self.velx[c_xmin:c_xmax, c_ymin:c_ymax]
-            local_vely = self.vely[c_xmin:c_xmax, c_ymin:c_ymax]
-            local_dhdt = self.dhdt[c_xmin:c_xmax, c_ymin:c_ymax]
-            local_smb  = self.smb[c_xmin:c_xmax, c_ymin:c_ymax]
+            local_mc_res = Topography_gpu.get_mass_conservation_residual_torch(
+                    bed_next[c_xmin:c_xmax, c_ymin:c_ymax],
+                    self.surf [c_xmin:c_xmax, c_ymin:c_ymax], 
+                    self.velx [c_xmin:c_xmax, c_ymin:c_ymax],
+                    self.vely [c_xmin:c_xmax, c_ymin:c_ymax],
+                    self.dhdt [c_xmin:c_xmax, c_ymin:c_ymax],
+                    self.smb  [c_xmin:c_xmax, c_ymin:c_ymax],
+                    self.resolution
+            )
 
-            local_mc_res = Topography.get_mass_conservation_residual(local_bed, local_surf, local_velx, local_vely, local_dhdt, local_smb, resolution)   
-            mc_res_candidate = mc_res.copy()
+            # Patch only the block region of the global residual tensor
+            mc_res_candidate = mc_res.clone()
+            vx0 = bxmin - c_xmin;  vx1 = vx0 + (bxmax - bxmin)
+            vy0 = bymin - c_ymin;  vy1 = vy0 + (bymax - bymin)
+            mc_res_candidate[bxmin:bxmax, bymin:bymax] = local_mc_res[vx0:vx1, vy0:vy1]
+
+            # Compute loss
+            loss_next, loss_next_mc, loss_next_data = self._loss_tensor(mc_res_candidate)
+
+            block_thickness   = self.surf[bxmin:bxmax, bymin:bymax] - bed_next[bxmin:bxmax, bymin:bymax]
             
-            # Our TARGET slice index
-            valid_x_start = bxmin - c_xmin
-            valid_x_end = valid_x_start + (bxmax - bxmin)
-            valid_y_start = bymin - c_ymin
-            valid_y_end = valid_y_start + (bymax - bymin)
-            mc_res_candidate[bxmin:bxmax, bymin:bymax] = local_mc_res[valid_x_start:valid_x_end, valid_y_start:valid_y_end]
-
-            data_diff = bed_next - self.cond_bed
-            loss_next, loss_next_mc, loss_next_data = self.loss(mc_res_candidate,data_diff)
-           
-            #make sure no bed elevation is greater than surface elevation
-            block_thickness = self.surf[bxmin:bxmax,bymin:bymax] - bed_next[bxmin:bxmax,bymin:bymax]
-            
+            # Thickness guard -- penalize where bed elevation > surface elevation
             if self.update_in_region:
-                block_region_mask = self.region_mask[bxmin:bxmax,bymin:bymax]
+                block_region_mask = self.region_mask[bxmin:bxmax, bymin:bymax]
             else:
-                block_region_mask = self.grounded_ice_mask[bxmin:bxmax,bymin:bymax]
-            
-            if np.sum((block_thickness<=0)[block_region_mask==1]) > 0:
-                loss_next = np.inf
+                block_region_mask = self.grounded_ice_mask[bxmin:bxmax, bymin:bymax]
 
+            if torch.sum((block_thickness <= 0) & (block_region_mask == 1)) > 0:
+                loss_next = torch.tensor(float('inf'), dtype=dtype, device=dev)
+
+            # Acceptance steps
             if loss_prev > loss_next:
-                acceptance_rate = 1
+                acceptance_rate = 1.0
             else:
-                acceptance_rate = min(1,np.exp(loss_prev-loss_next))
-            
-            u = rng.random()
-            if (u <= acceptance_rate):
-                bed_c = bed_next.copy()
-                
-                mc_res = mc_res_candidate # Update global residual if new slice is accepted
-                loss_prev = loss_next
-                loss_prev_mc = loss_next_mc
-                loss_cache[i] = loss_next
-                loss_mc_cache[i] = loss_next_mc
+                delta = loss_prev - loss_next         # both are GPU scalars
+                acceptance_rate = float(torch.exp(delta).clamp(max=1.0))
+
+            u = rng.random()                          # Python float from numpy RNG
+            if u <= acceptance_rate:
+                # Accept
+                bed_c    = bed_next                   
+                mc_res   = mc_res_candidate
+
+                loss_prev      = loss_next
+                loss_prev_mc   = loss_next_mc
                 loss_prev_data = loss_next_data
-                loss_data_cache[i] = loss_next_data
-                
-                step_cache[i] = True
-                if self.update_in_region:
-                    resampled_times[bxmin:bxmax,bymin:bymax] += self.region_mask[bxmin:bxmax,bymin:bymax]
-                else:
-                    resampled_times[bxmin:bxmax,bymin:bymax] += self.grounded_ice_mask[bxmin:bxmax,bymin:bymax]
+
+                loss_cache_t[i]      = loss_next
+                loss_mc_cache_t[i]   = loss_next_mc
+                loss_data_cache_t[i] = loss_next_data
+                step_cache_t[i]      = True
+
+                # Increment resampled-times counter for accepted block cells
+                resampled_times_t[bxmin:bxmax, bymin:bymax] += block_region_mask
 
                 accepted_count += 1
-                
             else:
-                loss_mc_cache[i] = loss_prev_mc
-                loss_cache[i] = loss_prev
-                loss_data_cache[i] = loss_prev_data
-                step_cache[i] = False
+                # Reject -- carry forward previous loss values
+                loss_cache_t[i]      = loss_prev
+                loss_mc_cache_t[i]   = loss_prev_mc
+                loss_data_cache_t[i] = loss_prev_data
+                step_cache_t[i]      = False
+
             
             if not only_save_last_bed:
-                bed_cache[i,:,:] = bed_c
-                
-            if not (self.sample_loc is None):
-                sample_values[:,i] = bed_c[sample_loc_ij[:,0],sample_loc_ij[:,1]]
+                bed_cache_t[i] = bed_c
 
+            if track_samples:
+                sample_vals_t[:, i] = bed_c[
+                    sample_loc_ij_t[:, 0], sample_loc_ij_t[:, 1]
+                ]
+
+            # Cmd progress bar
             if progress_bar:
-                # Update tqdm progress bar
-                iterator.set_postfix({
-                    'chain_id'  :   chain_id,
-                    'seed'      :   seed,
-                    'mc loss'   :   f'{loss_mc_cache[i]:.3e}',
-                    'data loss' :   f'{loss_data_cache[i]:.3e}',
-                    'loss'      :   f'{loss_cache[i]:.3e}',
-                    'acceptance rate'   :   f'{np.sum(step_cache)/(i+1):.6f}'
-                })
+                if i % 1000 == 0:
+                    iterator.set_postfix({
+                        'chain_id'        : chain_id,
+                        'seed'            : seed,
+                        'mc loss'         : f'{loss_mc_cache_t[i].item():.3e}',
+                        'data loss'       : f'{loss_data_cache_t[i].item():.3e}',
+                        'loss'            : f'{loss_cache_t[i].item():.3e}',
+                        'acceptance rate' : f'{accepted_count / (i + 1):.6f}',
+                    })
             else:
-                if i%info_per_iter == 0 or i == 1 or i == n_iter - 1:
+                if i % info_per_iter == 0 or i == 1 or i == n_iter - 1:
                     move_cursor_to_line(output_line)
                     clear_line()
-                    
-                    # Calculate progress
-                    progress = i / (n_iter - 1)
-                    progress_pct = progress * 100
-                    elapsed = time.time() - iter_start_time
-                    iter_per_sec = i / elapsed if elapsed > 0 else 0
-                    
-                    # Calculate ETA
-                    if iter_per_sec > 0:
-                        remaining_iters = n_iter - i
-                        eta_seconds = remaining_iters / iter_per_sec
-                        eta_hours = int(eta_seconds // 3600)
-                        eta_minutes = int((eta_seconds % 3600) // 60)
-                        eta_secs = int(eta_seconds % 60)
-                        eta_str = f"{eta_hours:02d}:{eta_minutes:02d}:{eta_secs:02d}"
-                    else:
-                        eta_str = "--:--:--"
-                    
-                    # Create visual progress bar
-                    bar_length = 10
-                    filled_length = int(bar_length * progress)
-                    bar = '█' * filled_length + '▍' * (1 if filled_length < bar_length and progress > 0 else 0)
-                    bar = bar.ljust(bar_length)
-                    
-                    # Format output
-                    print(f'Chain {chain_id} ({str(seed)[:6]}): {progress_pct:3.0f}%|{bar}| ETA: {eta_str} | it/s: {iter_per_sec:6.2f} | n: {n_iter:{len(str(n_iter))}d} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f}', end='')
+                    progress      = i / (n_iter - 1) * 100
+                    elapsed       = time.time() - iter_start_time
+                    iter_per_sec  = i / elapsed if elapsed > 0 else 0
+                    print(
+                        f'Chain {chain_id}: {progress:.1f}% | i: {i} | '
+                        f'mc loss: {loss_mc_cache_t[i].item():.3e} | '
+                        f'loss: {loss_cache_t[i].item():.3e} | '
+                        f'acc: {accepted_count / (i + 1):.4f} | '
+                        f'it/s: {iter_per_sec:.2f} | '
+                        f'seed: {str(seed)[:6]}',
+                        end=''
+                    )
                     sys.stdout.flush()
 
             # Calculate acceptance rate for plot
@@ -1412,35 +1729,50 @@ class chain_crf(chain):
             acceptance_rates.append(total_acceptance)
 
             if plot:
-                if i < 5000:
-                    update_interval = 100
-                else:
-                    update_interval = info_per_iter
-
+                update_interval = 100 if i < 5000 else info_per_iter
                 if i % update_interval == 0:
-                    # Update loss line
-                    line_loss.set_data(range(i + 1), loss_cache[:i + 1])
-                    ax_loss.relim()
-                    ax_loss.autoscale_view()
-
-                    # Update acceptance rate line
+                    # Minimal CPU transfer only for plotting – rare
+                    line_loss.set_data(
+                        range(i + 1),
+                        loss_cache_t[:i + 1].cpu().numpy()
+                    )
+                    ax_loss.relim(); ax_loss.autoscale_view()
                     line_acc.set_data(range(len(acceptance_rates)), acceptance_rates)
-                    ax_acc.set_ylim(0, 100)
-                    ax_acc.relim()
-                    ax_acc.autoscale_view()
-
+                    ax_acc.set_ylim(0, 100); ax_acc.relim(); ax_acc.autoscale_view()
                     display_handle.update(fig)
-                
+        
+        # Transfer to Numpy Arrays -- single operation at the end
+        loss_mc_cache_np   = loss_mc_cache_t.cpu().numpy()
+        loss_data_cache_np = loss_data_cache_t.cpu().numpy()
+        loss_cache_np      = loss_cache_t.cpu().numpy()
+        step_cache_np      = step_cache_t.cpu().numpy()
+        resampled_times_np = resampled_times_t.cpu().numpy()
+        blocks_cache_np    = blocks_cache_t.cpu().numpy()
+
+
         if not only_save_last_bed:
-            if not (self.sample_loc is None):
-                return bed_cache, loss_mc_cache, loss_data_cache, loss_cache, step_cache, resampled_times, blocks_cache, sample_values
+            bed_cache_np = bed_cache_t.cpu().numpy()
+            if track_samples:
+                sample_values_np = sample_vals_t.cpu().numpy()
+
+                return (bed_cache_np, loss_mc_cache_np, loss_data_cache_np,
+                        loss_cache_np, step_cache_np, resampled_times_np,
+                        blocks_cache_np, sample_values_np)
             else:
-                return bed_cache, loss_mc_cache, loss_data_cache, loss_cache, step_cache, resampled_times, blocks_cache
+                return (bed_cache_np, loss_mc_cache_np, loss_data_cache_np,
+                        loss_cache_np, step_cache_np, resampled_times_np,
+                        blocks_cache_np)
         else:
-            if not (self.sample_loc is None):
-                return bed_c, loss_mc_cache, loss_data_cache, loss_cache, step_cache, resampled_times, blocks_cache, sample_values
+            last_bed_np = bed_c.cpu().numpy()
+            if track_samples:
+                sample_values_np = sample_vals_t.cpu().numpy()
+                return (last_bed_np, loss_mc_cache_np, loss_data_cache_np,
+                        loss_cache_np, step_cache_np, resampled_times_np,
+                        blocks_cache_np, sample_values_np)
             else:
-                return bed_c, loss_mc_cache, loss_data_cache, loss_cache, step_cache, resampled_times, blocks_cache
+                return (last_bed_np, loss_mc_cache_np, loss_data_cache_np,
+                        loss_cache_np, step_cache_np, resampled_times_np,
+                        blocks_cache_np)
 
 class chain_sgs(chain):
     """
@@ -1842,32 +2174,10 @@ class chain_sgs(chain):
                 if i%info_per_iter == 0 or i == 1 or i == n_iter - 1:
                     move_cursor_to_line(output_line)
                     clear_line()
-                    
-                    # Calculate progress
-                    progress = i / (n_iter - 1)
-                    progress_pct = progress * 100
+                    progress = i / (n_iter - 1) * 100
                     elapsed = time.time() - iter_start_time
                     iter_per_sec = i / elapsed if elapsed > 0 else 0
-                    
-                    # Calculate ETA
-                    if iter_per_sec > 0:
-                        remaining_iters = n_iter - i
-                        eta_seconds = remaining_iters / iter_per_sec
-                        eta_hours = int(eta_seconds // 3600)
-                        eta_minutes = int((eta_seconds % 3600) // 60)
-                        eta_secs = int(eta_seconds % 60)
-                        eta_str = f"{eta_hours:02d}:{eta_minutes:02d}:{eta_secs:02d}"
-                    else:
-                        eta_str = "--:--:--"
-                    
-                    # Create visual progress bar
-                    bar_length = 10
-                    filled_length = int(bar_length * progress)
-                    bar = '█' * filled_length + '▍' * (1 if filled_length < bar_length and progress > 0 else 0)
-                    bar = bar.ljust(bar_length)
-                    
-                    # Format output
-                    print(f'Chain {chain_id} ({str(seed)[:6]}): {progress_pct:3.0f}%|{bar}| ETA: {eta_str} | it/s: {iter_per_sec:6.2f} | n: {n_iter:{len(str(n_iter))}d} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f}', end='')
+                    print(f'Chain {chain_id}: {progress:.1f}% | i: {i} | mc loss: {loss_mc_cache[i]:.3e} | loss: {loss_cache[i]:.3e} | acc: {np.sum(step_cache)/(i+1):.4f} | it/s: {iter_per_sec:.2f} | seed: {str(seed)[:6]}', end='')
                     sys.stdout.flush()
 
             # Calculate acceptance rate for plot

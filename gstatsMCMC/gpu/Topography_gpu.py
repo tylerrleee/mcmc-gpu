@@ -1,9 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 25 10:53:28 2025
 
-@author: niyashao
+"""
+Created on 17/02/2026
+
+Refactored from Topography.py -- niyashao
+PyTorch GPU (MPS / CUDA) conversion -- tylerrleee
+
+@author: @tylerrleee
 """
 
 ###import libraries
@@ -17,8 +19,62 @@ import os
 import csv
 import gstatsim as gs
 from PIL import Image, ImageFilter
-from .Utilities import _interpolate
+
 import torch
+# ==============
+# Torch Helpers
+# ==============
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+
+
+
+def to_tensor(arr, device: torch.device = None, dtype = torch.float32) -> torch.Tensor:
+    """Convert a numpy array (or anything array-like) to a torch tensor on *device*."""
+
+    if device is None:
+        device = DEVICE
+
+    if isinstance(arr, torch.Tensor):
+        return arr.to(device = device, 
+                      dtype  = dtype)
+    return torch.tensor(np.asarray(arr,
+                                    dtype = np.float64), 
+                                    dtype = dtype, 
+                                    device=device)
+
+def to_numpy(t) -> np.ndarray:
+    """Convert a torch tensor back to a numpy ndarray (CPU, float32)."""
+    if isinstance(t, torch.Tensor):
+        return t.detach().cpu().numpy()
+    return np.asarray(t)
+
+
+def _interpolate(interp_method, fromx, fromy, data, tox, toy, k):
+    """Interpolate using the verde library (CPU).  Inputs/outputs are *numpy*
+    - Verde uses SciPy/Scikit-learn -- hence no GPU support """
+
+    # np.ndarray check
+    fromx, fromy, data = to_numpy(fromx), to_numpy(fromy), to_numpy(data)
+    tox, toy = to_numpy(tox), to_numpy(toy)
+
+    if interp_method == 'spline':
+        interp = vd.Spline()
+    elif interp_method == 'linear':
+        interp = vd.Linear()
+    elif interp_method == 'kneighbors':
+        interp = vd.KNeighbors(k=k)
+    else:
+        raise ValueError('the interp_method is not correctly defined, exit the function')
+
+    interp.fit((fromx, fromy), data)
+    result = interp.predict((tox, toy))
+    return result
+    
 
 """load surface mass balance data from the smb data from https://doi.org/10.5194/tc-12-1479-2018 and https://www.projects.science.uu.nl/iceclimate/publications/data/2018/vwessem2018_tc/RACMO_Yearly/
 
@@ -29,11 +85,13 @@ Args:
     interp_method (str): The interpolation methods, can choose from 'spline', 'linear', or 'kneighbors'. Details please check python package 'verde'
     k (int): default = 1. Should only be used when interp_method = 'kneighbors', where k define number of neighbors
     smb_time (int): default = 2015. Should be a value between range 1979 and 2016 (inclusive). 
+    
 Returns:
     smb (2D array of floats): the interpolated annual average SMB for year 'smb_time'
     fig: figure of interpolated SMB and uninterpolated original data
 """
-def load_smb_racmo(dataset_path,xx,yy,res,time=2015,interp_method='linear',k=1):
+
+def load_smb_racmo(dataset_path, xx, yy, res, time=2015, interp_method='linear', k=1):
     # check if smb_time is in the range
     if (time > 2016) or (time < 1979):
         raise ValueError("invalid value for time variable")
@@ -52,7 +110,10 @@ def load_smb_racmo(dataset_path,xx,yy,res,time=2015,interp_method='linear',k=1):
     xx2, yy2 = transformer.transform(lonlon, latlat)
     
     # restrict the domain of interpolation
-    msk = (xx2 > xx.min() - res*200) & (xx2 < xx.max() + res*200) & (yy2 > yy.min() - res*200) & (yy2 < yy.max() + res*200)
+    msk = (xx2 > xx.min() - res*200) \
+            & (xx2 < xx.max() + res*200) \
+            & (yy2 > yy.min() - res*200) \
+            & (yy2 < yy.max() + res*200)
     ix = xx2[msk]
     iy = yy2[msk]
     max_time = 2016
@@ -60,32 +121,45 @@ def load_smb_racmo(dataset_path,xx,yy,res,time=2015,interp_method='linear',k=1):
     iz = ds.isel(time=time_int)['smb'].values.squeeze()[msk]
     
     # assume unit is water equivalent mm / yr, correct units to m/yr
-    iz = iz/920
+    # iz assumes it is a standard Python array
+    iz = iz / 920.0
     
     preds_smb = _interpolate(interp_method, ix, iy, iz, xx.flatten(), yy.flatten(), k)
-
     preds_smb = preds_smb.reshape(xx.shape)
 
-    # plot results
-    vmax = max(np.nanmax(preds_smb), np.nanmax(iz))
-    vmin = min(np.nanmin(preds_smb), np.nanmin(iz))
+    preds_smb_t = to_tensor(preds_smb)
+    iz_tensor   = to_tensor(iz)
+
+    # Create a stack where NaN values are 0
+    max_stack = torch.stack([
+        torch.nanmax(preds_smb_t), torch.nanmax(iz_tensor)
+    ])
+    min_stack = torch.stack([
+        torch.nanmin(preds_smb_t), torch.nanmin(iz_tensor)
+    ])
+
+    # scale bar values
+    vmax = torch.max(max_stack)
+    vmin = torch.min(min_stack)
+
     #print(np.max(preds_smb), np.max(iz),np.min(preds_smb), np.min(iz))
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11,4), gridspec_kw={'wspace':-0.1})
+    # plot results
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4), gridspec_kw={'wspace': -0.1})
     
     im = ax1.pcolormesh(xx, yy, preds_smb, vmin=vmin, vmax=vmax)
     ax1.axis('scaled')
     ax1.set_title(interp_method + ' interpolation')
     plt.colorbar(im, ax=ax1, pad=0.03, aspect=40, label='m/yr')
-    
+
     im = ax2.scatter(ix, iy, c=iz, s=150, vmin=vmin, vmax=vmax)
     ax2.axis('scaled')
     ax2.set_title('SMB data')
     ax2.set_yticks([])
+
     plt.colorbar(im, ax=ax2, pad=0.03, aspect=40)
-    
     plt.close()
-    
+
     return preds_smb, fig
 
 
@@ -104,40 +178,51 @@ Returns:
     dhdt (2D array of floats): the interpolated annual average change of the surface height between begin_year and end_year
     fig: figure of interpolated surface height change and uninterpolated original data
 """
-def load_dhdt(dataset_path,xx,yy,res,interp_method='linear',k=1,begin_year=2014,month=5,end_year=2016):
-    
+def load_dhdt(dataset_path, xx, yy, res, interp_method='linear', k=1,
+              begin_year=2014, month=5, end_year=2016):
     try:
         ds2 = xr.open_dataset(dataset_path)
     except FileNotFoundError:
         print("Error: File not found at path: ", dataset_path)
+
         
-    ds2 = ds2.sel(x=(ds2.x > xx.min() - res*20) & (ds2.x < xx.max() + res*20), y=(ds2.y > yy.min() - res*20) & (ds2.y < yy.max() + res*20))
+    ds2 = ds2.sel(
+        x=(ds2.x > xx.min() - res*20) & (ds2.x < xx.max() + res*20),
+        y=(ds2.y > yy.min() - res*20) & (ds2.y < yy.max() + res*20)
+    )
 
     if month < 1 or month > 11:
         raise ValueError()
     if begin_year < 1950 or begin_year > 2020:
         raise ValueError()
-    if end_year < begin_year+1:
+    if end_year < begin_year + 1:
         raise ValueError()
 
-    month_str = str(month).zfill(2)
-    month_p1_str = str(month+1).zfill(2)
-    ref = ds2.sel(time=slice(str(begin_year)+'-'+month_str+'-01', str(begin_year)+'-'+month_p1_str+'-01'))
-    later = ds2.sel(time=slice(str(end_year)+'-'+month_str+'-01', str(end_year)+'-'+month_p1_str+'-01'))
-    
+    month_str    = str(month).zfill(2)
+    month_p1_str = str(month + 1).zfill(2)
+    ref   = ds2.sel(time=slice(str(begin_year)+'-'+month_str+'-01',
+                               str(begin_year)+'-'+month_p1_str+'-01'))
+    later = ds2.sel(time=slice(str(end_year)+'-'+month_str+'-01',
+                               str(end_year)+'-'+month_p1_str+'-01'))
+
     num_years = int(end_year) - int(begin_year)
-    
-    dhdt = (later['height_change'].values-ref['height_change'].values)/num_years
+
+    # Torch based DHDT calculation
+    later_t = to_tensor(later['height_change'].values)
+    ref_t   = to_tensor(ref['height_change'].values)
+    dhdt_t  = (later_t - ref_t) / num_years
+    dhdt    = to_numpy(dhdt_t)
 
     xx2, yy2 = np.meshgrid(ds2.x.values, ds2.y.values)
-    
-    preds_h = _interpolate(interp_method, xx2.flatten(), yy2.flatten(), dhdt.flatten(), xx.flatten(), yy.flatten(), k)
 
+    preds_h = _interpolate(interp_method, xx2.flatten(), yy2.flatten(),
+                           dhdt.flatten(), xx.flatten(), yy.flatten(), k)
     preds_h = preds_h.reshape(xx.shape)
-    
-    v_max = np.nanmax(dhdt)
-    v_min = np.nanmin(dhdt)
-    absmax = max(abs(v_max),abs(v_min))
+
+    dhdt_t2 = to_tensor(dhdt)
+    v_max  = float(torch.nanmax(dhdt_t2))
+    v_min  = float(torch.nanmin(dhdt_t2))
+    absmax = max(abs(v_max), abs(v_min))
     
     fig, ax = plt.subplots(figsize=(6, 5))
     p = ax.pcolormesh(xx/1000, yy/1000, preds_h, vmin=-1*absmax, vmax=absmax, cmap='RdBu_r')
@@ -166,29 +251,35 @@ Returns:
     velx_err (2D numpy array of floats): the interpolated veloxity error in x direction
     vely_err (2D numpy array of floats): the interpolated veloxity error in xy direction
 """
-def load_vel_measures(dataset_path,xx,yy,res,interp_method='linear',k=1):
+def load_vel_measures(dataset_path, xx, yy, res, interp_method='linear', k=1):
     ds2 = xr.open_dataset(dataset_path)
-    
-    ds2 = ds2.sel(x=(ds2.x > xx.min() -  res*20) & (ds2.x < xx.max() + res*20), y=(ds2.y > yy.min() -  res*20) & (ds2.y < yy.max() + res*20))
+
+    ds2 = ds2.sel(
+        x=(ds2.x > xx.min() - res*20) & (ds2.x < xx.max() + res*20),
+        y=(ds2.y > yy.min() - res*20) & (ds2.y < yy.max() + res*20)
+    )
     
     xx2, yy2 = np.meshgrid(ds2.x.values, ds2.y.values)
     
     velx_err_raw = ds2['ERRX'].values
     vely_err_raw = ds2['ERRY'].values
-    velx_raw = ds2['VX'].values
-    vely_raw = ds2['VY'].values
-    
-    velx_err = _interpolate(interp_method, xx2.flatten(), yy2.flatten(), velx_err_raw.flatten(), xx.flatten(), yy.flatten(), k)
-    velx_err = velx_err.reshape(xx.shape)
-    vely_err = _interpolate(interp_method, xx2.flatten(), yy2.flatten(), vely_err_raw.flatten(), xx.flatten(), yy.flatten(), k)
-    vely_err = vely_err.reshape(xx.shape)
-    velx = _interpolate(interp_method, xx2.flatten(), yy2.flatten(), velx_raw.flatten(), xx.flatten(), yy.flatten(), k)
-    velx = velx.reshape(xx.shape)
-    vely = _interpolate(interp_method, xx2.flatten(), yy2.flatten(), vely_raw.flatten(), xx.flatten(), yy.flatten(), k)
-    vely = vely.reshape(xx.shape)
+    velx_raw     = ds2['VX'].values
+    vely_raw     = ds2['VY'].values
+
+    # Interpolate && reshape to match longitude 
+    velx_err = _interpolate(interp_method, xx2.flatten(), yy2.flatten(),
+                            velx_err_raw.flatten(), xx.flatten(), yy.flatten(), k).reshape(xx.shape)
+    vely_err = _interpolate(interp_method, xx2.flatten(), yy2.flatten(),
+                            vely_err_raw.flatten(), xx.flatten(), yy.flatten(), k).reshape(xx.shape)
+    velx     = _interpolate(interp_method, xx2.flatten(), yy2.flatten(),
+                            velx_raw.flatten(), xx.flatten(), yy.flatten(), k).reshape(xx.shape)
+    vely     = _interpolate(interp_method, xx2.flatten(), yy2.flatten(),
+                            vely_raw.flatten(), xx.flatten(), yy.flatten(), k).reshape(xx.shape)
+
     
     ds = [velx, vely, velx_err, vely_err]
-    titles = ['velocity in x-direction', 'velocity in y-direction', 'the error in velocity in x-direction', 'the error in velocity in y-direction']
+    titles = ['velocity in x-direction', 'velocity in y-direction', 
+              'the error in velocity in x-direction', 'the error in velocity in y-direction']
     fig, axs = plt.subplots(2, 2, figsize=(10.5,7), sharey=True, sharex=True,
                            gridspec_kw={'wspace':-0.01})
     
@@ -219,15 +310,18 @@ Returns:
     fig: visualization of the interpolated data
 """
 
-def load_bedmachine(dataset_path,xx,yy,res,interp_method='linear',k=1):
+def load_bedmachine(dataset_path, xx, yy, res, interp_method='linear', k=1):
     dsbm = xr.open_dataset(dataset_path)
-    dsbm = dsbm.sel(x=(dsbm.x > xx.min() - res*20) & (dsbm.x < xx.max() + res*20), y=(dsbm.y > yy.min() - res*20) & (dsbm.y < yy.max() + res*20))
-    
-    bm_mask = dsbm['mask'].values
-    bm_source = dsbm['source'].values
-    bm_surface = dsbm['surface'].values
-    bm_bed = dsbm['bed'].values
-    bm_errbed = dsbm['errbed'].values
+    dsbm = dsbm.sel(
+        x=(dsbm.x > xx.min() - res*20) & (dsbm.x < xx.max() + res*20),
+        y=(dsbm.y > yy.min() - res*20) & (dsbm.y < yy.max() + res*20)
+    )
+
+    bm_mask     = dsbm['mask'].values
+    bm_source   = dsbm['source'].values
+    bm_surface  = dsbm['surface'].values
+    bm_bed      = dsbm['bed'].values
+    bm_errbed   = dsbm['errbed'].values
     
     xx2, yy2 = np.meshgrid(dsbm.x.values, dsbm.y.values)
     
@@ -249,7 +343,8 @@ def load_bedmachine(dataset_path,xx,yy,res,interp_method='linear',k=1):
     bm_errbed = bm_errbed.reshape(xx.shape)
     
     ds = [bm_mask, bm_source, bm_bed, bm_surface, bm_errbed]
-    titles = ['BedMachine mask', 'BedMachine source', 'BedMachine bed', 'BedMachine surface', 'BedMachine bed error']
+    titles = ['BedMachine mask', 'BedMachine source', 'BedMachine bed',
+               'BedMachine surface', 'BedMachine bed error']
     
     fig, axs = plt.subplots(3, 2, figsize=(10.5,7), sharey=True, sharex=True,
                            gridspec_kw={'wspace':-0.01})
@@ -287,7 +382,7 @@ def load_bedmap(dataset_path,xx,yy,res,interp_method='linear',k=1):
     dsbm = dsbm.sel(x=(dsbm.x > xx.min() - res*20) & (dsbm.x < xx.max() + res*20), y=(dsbm.y > yy.min() - res*20) & (dsbm.y < yy.max() + res*20))
     
     bm_surf = dsbm['surface_topography'].values
-    bm_bed = dsbm['bed_topography'].values
+    bm_bed  = dsbm['bed_topography'].values
     bm_bed_uncertainty = dsbm['bed_uncertainty'].values
     bm_mask = dsbm['mask'].values
     
@@ -354,14 +449,14 @@ def load_radar(folder_path, output_csv, include_only_thickness_data = False):
     
     filename_list = os.listdir(folder_path)
     df_list = [] #a list of dataframe containing radar data, each dataframe contains radar data from one file
-    mf = open(folder_path+"/radar_metadata.txt", "a")
+    mf = open(folder_path + "/radar_metadata.txt", "a")
     for filename in filename_list:
         
         if filename[-4:] != '.csv':
             continue
         
         with open(folder_path + '/' + filename) as fp:
-            mf.write(filename+'\n')
+            mf.write(filename + '\n')
             
             reader = csv.reader(fp)
             for j in range(18):
@@ -412,8 +507,10 @@ def load_radar(folder_path, output_csv, include_only_thickness_data = False):
     df.to_csv(output_csv,index=False, header=True)
     print('output csv file saved as ', output_csv)
     
-    v_min = np.min(df['bed'].values)
-    v_max = np.max(df['bed'].values)
+    # Convert to tensor
+    bed_t = to_tensor(df['bed'].values)
+    v_min = float(torch.min(bed_t))
+    v_max = float(torch.max(bed_t))
      
     df_sparse1 = df_bedmap3[df_bedmap3.index % 10 == 1]
     df_sparse2 = df_bedmap2[df_bedmap2.index % 10 == 1]
@@ -460,42 +557,58 @@ def grid_data(df, x_name, y_name, z_name, res, xmin, xmax, ymin, ymax):
 
     grid_coord, cols, rows = gs.Gridding.make_grid(xmin, xmax, ymin, ymax, res) 
 
-    df = df[['X','Y','Z']] 
-    np_data = df.to_numpy() 
-    np_resize = np.copy(np_data) 
-    origin = np.array([xmin,ymin])
-    resolution = np.array([res,res])
+    np_data   = df[['X', 'Y', 'Z']].to_numpy()
+    np_resize = np.copy(np_data)
+    origin     = np.array([xmin, ymin])
+    resolution = np.array([res, res])
     
     # shift and re-scale the data by subtracting origin and dividing by resolution
-    np_resize[:,:2] = np.rint((np_resize[:,:2]-origin)/resolution) 
+    np_resize[:, :2] = np.rint((np_resize[:, :2] - origin) / resolution)
 
-    grid_sum = np.zeros((rows,cols))
-    grid_count = np.copy(grid_sum) 
 
-    for i in range(np_data.shape[0]):
-        xindex = np.int32(np_resize[i,1])
-        yindex = np.int32(np_resize[i,0])
+    data_t   = to_tensor(np_data, device=device)
+    resize_t = to_tensor(np_resize, device=device)
 
-        if ((xindex >= rows) | (yindex >= cols)):
-            continue
+    grid_sum_t   = torch.zeros((rows, cols), dtype=torch.float64, device=device)
+    grid_count_t = torch.zeros((rows, cols), dtype=torch.float64, device=device)
 
-        grid_sum[xindex,yindex] = np_data[i,2] + grid_sum[xindex,yindex]
-        grid_count[xindex,yindex] = 1 + grid_count[xindex,yindex]
+    xindex = resize_t[:, 1].long()
+    yindex = resize_t[:, 0].long()
+    # Constraints for each
+    valid_constraints  = (xindex < rows) & (yindex < cols) & (xindex >= 0) & (yindex >= 0)
 
-    np.seterr(invalid='ignore') 
-    grid_matrix = np.divide(grid_sum, grid_count) 
-    grid_array = np.reshape(grid_matrix,[rows*cols])
-    grid_sum = np.reshape(grid_sum,[rows*cols]) 
-    grid_count = np.reshape(grid_count,[rows*cols]) 
+    xindex_v = xindex[valid_constraints]
+    yindex_v = yindex[valid_constraints]
+    z_v      = data_t[:, 2][valid_constraints]
 
-    # make dataframe    
-    grid_total = np.array([grid_coord[:,0], grid_coord[:,1], 
-                           grid_sum, grid_count, grid_array])    
-    df_grid = pd.DataFrame(grid_total.T, 
-                           columns = ['X', 'Y', 'Sum', 'Count', 'Z']) 
-    grid_matrix = np.flipud(grid_matrix) 
-    
+    flat_idx = xindex_v * cols + yindex_v
+    grid_sum_flat   = grid_sum_t.view(-1)
+    grid_count_flat = grid_count_t.view(-1)
+    grid_sum_flat.scatter_add_(0, flat_idx, z_v)
+    grid_count_flat.scatter_add_(0, flat_idx, torch.ones_like(z_v))
+
+    # Nonzero Division Check
+    grid_matrix_t = torch.where( 
+        grid_count_t > 0,
+        grid_sum_t / grid_count_t,
+        torch.tensor(float('nan'), dtype=torch.float32, device=device)
+    )
+
+    grid_matrix = to_numpy(grid_matrix_t)
+    grid_sum    = to_numpy(grid_sum_t)
+    grid_count  = to_numpy(grid_count_t)
+
+    grid_array = grid_matrix.reshape(rows * cols)
+    grid_sum_f = grid_sum.reshape(rows * cols)
+    grid_count_f = grid_count.reshape(rows * cols)
+
+    grid_total = np.array([grid_coord[:, 0], grid_coord[:, 1],
+                           grid_sum_f, grid_count_f, grid_array])
+    df_grid = pd.DataFrame(grid_total.T, columns=['X', 'Y', 'Sum', 'Count', 'Z'])
+    grid_matrix = np.flipud(grid_matrix)
+
     return df_grid, grid_matrix, rows, cols
+
 
 """
 Args:
@@ -543,32 +656,72 @@ Returns:
     mask_final: the final high velocity region mask
     TODO: test
 """
-def get_highvel_boundary(velx, vely, velmag_threshold, grounded_ice_mask, ocean_mask, distance_max, xx, yy, smooth_mode = 10):
+def get_highvel_boundary(velx, vely, velmag_threshold, grounded_ice_mask, ocean_mask, 
+                         distance_max, xx, yy, smooth_mode=10, batch_size=10000):
+
+    velx_t = to_tensor(velx, device=device)
+    vely_t = to_tensor(vely, device=device)
+    grounded_ice_mask_t  = to_tensor(grounded_ice_mask.astype(float), device=device)
+    ocean_mask_t   = to_tensor(ocean_mask.astype(float), device=device)
+
+    velmag_t = torch.sqrt(velx_t**2 + vely_t**2)
+    mask_t   = ((grounded_ice_mask_t > 0) & (velmag_t >= velmag_threshold)) | (ocean_mask_t > 0)
+
+    # Smooth with PIL (CPU) – convert mask to uint8 image
+    mask_np  = to_numpy(mask_t).astype(np.uint8)
+    image    = Image.fromarray(mask_np * 255)
+    image    = image.filter(ImageFilter.ModeFilter(size=smooth_mode))
+    mask_mat = (np.array(image) / 255).astype(int)
+
+    # Tensor conversion
+    xx_t = to_tensor(xx, device=device)
+    yy_t = to_tensor(yy, device=device)
+    mask_mat_t = to_tensor(mask_mat, device=device)
+
+    constraint_mask = (mask_mat_t == 1) & (grounded_ice_mask_t == 1)
+
+    # shape: (N_constraints, 2)
+    constraint_pts = torch.stack([
+        xx_t[constraint_mask], 
+        yy_t[constraint_mask]
+    ], dim=1)
+
+    # Handle edge case: No constraint points found
+    if constraint_pts.size(0) == 0:
+        return np.zeros_like(grounded_ice_mask, dtype=bool)
     
-    mask = (grounded_ice_mask) & (np.sqrt(velx**2+vely**2) >= velmag_threshold) #anywhere is grounded and high velocity
-    mask = mask | ocean_mask #include open ocean and floating ice
+    # Flatten the grid into a list of coordinates
+    # shape: (H*W, 2)
+    grid_pts = torch.stack([xx_t.flatten(), yy_t.flatten()], dim=1)
 
-    image = Image.fromarray((mask * 255).astype(np.uint8))
-    image = image.filter(ImageFilter.ModeFilter(size=smooth_mode)) #smooth the 'edge' such that the region have clear border
-    mask_mat = np.array(np.array(image)/255,dtype=int)
+    # Batch processing
+    n_grid = grid_pts.size(0)
+    min_dists = torch.empty(n_grid, device=device, dtype=torch.float32)
     
-    #the following code 'expand' the region outward for 'distance_max' length
+    # Process grid in chunks
+    # This loop ensures only allocate (Batch_Size * N_constraints) memory at each iteration
+    for i in range(0, n_grid, batch_size):
+        # Current batch of grid points: (Batch, 2)
+        batch_grid = grid_pts[i : i + batch_size]
+        
+        # Compute distance matrix: (Batch, N_constraints)
+        #  p-norm distance (default p=2 ; Euclidean)
+        dists = torch.cdist(batch_grid, constraint_pts)
+        
+        # Find min distance for each pixel in this batch: (Batch,)
+        min_vals, indices = torch.min(dists, dim=1)
+        
+        # Store results
+        min_dists[i : i + batch_size] = min_vals
 
-    # when outside of high velocity, grounded ice region, the xx_hard or yy_hard is np.nan;
-    # when inside, the xx_hard or yy_hard is its coordinates on the map
-    mask_dist = np.zeros(xx.shape)
-    xx_hard = np.where((mask_mat==1)&(grounded_ice_mask==1), xx, np.nan) 
-    yy_hard = np.where((mask_mat==1)&(grounded_ice_mask==1), yy, np.nan)
+    # 5. Reshape and Finish
+    mask_dist_t = min_dists.reshape(xx.shape)    
 
-    # for every location, find its distance to the cloest points that is inside the mask_mat>0 region
-    for i in range(xx.shape[0]):
-        for j in range(xx.shape[1]):
-            mask_dist[i,j] = np.nanmin(np.sqrt(np.square(yy[i,j]-yy_hard)+np.square(xx[i,j]-xx_hard)))
+    # Mask constraints : with max distance && doesn't include grounded ice
+    mask_final_t = (mask_dist_t < distance_max) & (grounded_ice_mask_t > 0)
+    mask_final_np = to_numpy(mask_final_t).astype(bool)
 
-    # anywhere that is grounded and close to mask_mat>0
-    mask_final = ((mask_dist<distance_max) & grounded_ice_mask)
-    
-    return mask_final
+    return mask_final_np
 
 """ compute the mass conservation residual from topography
 
@@ -589,6 +742,18 @@ Note: need to consider uncertainties due to
 3. numerical error due to the np.gradient function
 4. error in all these day and correlation in the error
 """
+
+
+def get_mass_conservation_residual_torch(bed, surf, velx, vely, dhdt, smb, res):    
+    thick_t = surf - bed
+
+    # torch.gradient returns a list; axis 1 = x (columns), axis 0 = y (rows)
+    (dx_t,) = torch.gradient(velx * thick_t, spacing=(float(res),), dim=1)
+    (dy_t,) = torch.gradient(vely * thick_t, spacing=(float(res),), dim=0)
+
+    res_t = dx_t + dy_t + dhdt - smb
+    return res_t
+
 def get_mass_conservation_residual(bed, surf, velx, vely, dhdt, smb, resolution):
     thick = surf - bed
     
@@ -599,19 +764,7 @@ def get_mass_conservation_residual(bed, surf, velx, vely, dhdt, smb, resolution)
     
     return res
 
-def get_mass_conservation_residual_tensor(bed: torch.Tensor, surf: torch.Tensor, velx: torch.Tensor, vely: torch.Tensor, dhdt: torch.Tensor, smb: torch.Tensor, resolution: torch.Tensor):    
-    """ Accepts only Torch.Tensor"""
-    thick = surf - bed
-
-    # torch.gradient returns a list; axis 1 = x (columns), axis 0 = y (rows)
-    # spacing argument corresponds to the physical resolution
-    (dx_t,) = torch.gradient(velx * thick, spacing=(float(resolution),), dim=1)
-    (dy_t,) = torch.gradient(vely * thick, spacing=(float(resolution),), dim=0)
-
-    res_t: torch.Tensor = dx_t + dy_t + dhdt - smb
-    return res_t
-
-# TODO
+# TODO <============
 def filter_data_by_std(df_in, rf_bed, cond_bed, num_of_std, xx, yy, shallow, dfmaskname = 'bedmachine_mask'):
     
     df = df_in.copy()

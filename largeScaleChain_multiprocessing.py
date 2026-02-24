@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 from gstatsMCMC import Topography
 from gstatsMCMC import MCMC
+from gstatsMCMC import MCMC_test
+
+import torch
 from sklearn.preprocessing import QuantileTransformer
 import skgstat as skg
 from copy import deepcopy
@@ -13,6 +16,21 @@ import sys
 import json
 import psutil
 import config
+
+def _chain_dict_to_numpy(d: dict) -> dict:
+    """
+    Normalise all torch.Tensor values in a chain __dict__ snapshot back to
+    numpy arrays before pickling for multiprocessing. This ensures
+    init_lsc_chain_by_instance always receives numpy inputs regardless of
+    whether run() was previously called on the template chain.
+    """
+    out = {}
+    for k, v in d.items():
+        if isinstance(v, torch.Tensor):
+            out[k] = v.detach().cpu().numpy()
+        else:
+            out[k] = v
+    return out
 
 def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_seeds,n_iters,output_path='./Data/output'):
     '''
@@ -33,12 +51,12 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     -------
     result: a list of results from all the chains runned.
 
-    '''
+    '''                     
     # Clear the console for the progress bars
     os.system('cls' if os.name == 'nt' else 'clear')
-    
     tic = time.time()
     
+    ctx = mp.get_context('spawn')
     params = []
 
     # Retrive parameters from the existing chain / RandField
@@ -46,11 +64,11 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     example_RF = rf.__dict__
 
    # Modify some of the parameters based on the input rng_seeds, initial_beds, and n_iters
-    for i in range(n_chains):   
-        chain_param = deepcopy(example_chain)
+    for i in range(n_chains):           
+        chain_param = _chain_dict_to_numpy(deepcopy(example_chain))
         chain_param['rng_seed'] = rng_seeds[i]
         chain_param['initial_bed'] = initial_beds[i]
-        
+
         RF_param = deepcopy(example_RF)
         RF_param['rng_seed'] = rng_seeds[i]
 
@@ -73,16 +91,28 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     sys.stdout.flush() # Force output into the terminal
     
     # The multiprocessing step
-    with mp.Pool(n_workers) as pool:
+    with ctx.Pool(n_workers) as pool:
         result = pool.starmap(lsc_run_wrapper, params)
 
-    # Move cursor below chain outputs before printing the timing
-    print('\n' * (n_chains + 1))
+    # Print completed output
+    print('\n' * 3)
+    print(r'''
+                _o                  _                 _o_   o   o
+            o    (^)  _             (o)    >')         (^)  (^) (^)
+        _ (^) ('>~ _(v)_      _   //-\\   /V\      ('> ~ __.~   ~
+        ('v')~ // \\  /-\      (.)-=_\_/)   (_)>     (V)  ~  ~~ /__ /\
+        //-=-\\ (\_/) (\_/)      V \ _)>~    ~~      <(__\[     ](__=_')
+        (\_=_/)  ^ ^   ^ ^       ~  ~~                ~~~~        ~~~~~
+        _^^_^^   __  ..-.___..---I~~~:_  .__...--.._.;-'I~~~~-.____...;-
+        |~|~~~~~| ~~|  _   |    |  _| ~~|  |  |  |  |_ |      | _ |  |
+        _.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~-~
+            ''')
 
     toc = time.time()
     print(f'Completed in {toc-tic:.2f} seconds')
     
     return result
+
 
 def lsc_run_wrapper(param_chain, param_rf, param_run):
     '''
@@ -99,13 +129,17 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     result (tuple): A tuple containing the results of the run
 
     '''
-
+    
+    torch.set_num_threads(1)
+    os.environ['OMP_NUM_THREADS'] = '1'
+    os.environ['MKL_NUM_THREADS'] = '1'
+    
     # Suppress initialization prints from workers
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC.init_lsc_chain_by_instance(param_chain)
-    rf1 = MCMC.initiate_RF_by_instance(param_rf)
+    chain = MCMC_test.init_lsc_chain_by_instance(param_chain)
+    rf1   = MCMC_test.initiate_RF_by_instance(param_rf)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -314,7 +348,7 @@ def msc_run_wrapper(param_chain, param_run):
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC.init_msc_chain_by_instance(param_chain)
+    chain = MCMC_test.init_msc_chain_by_instance(param_chain)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -428,15 +462,15 @@ def msc_run_wrapper(param_chain, param_run):
 if __name__=='__main__':
     # Set file paths here
     #NOTE use r string literals in case backslashes are used
-    glacier_data_path = Path(r'data/BindSchalder_Macayeal_IceStreams.csv') 
+    glacier_data_path = Path(r'./data/BindSchadler_Macayeal_IceStreams.csv') 
     sgs_bed_path = Path(r'sgs_beds/sgs_0_bindshadler_macayeal.txt')
-    data_weight_path = Path(r'data/data_weight_bindshalder_macayeal.txt')
-    seed_file_path = Path(r'200_seeds.txt')
+    data_weight_path = Path(r'data/data_weight.txt')
+    seed_file_path = Path(r'data/200_seeds.txt')
     output_path = Path(r'data/bindshadler_macayeal/')
 
     # Multiprocessing params
-    n_iter = 2000000
-    offset_idx = 5 # Which seed to start from (0-9)
+    n_iter = 20000
+    offset_idx = 0 # Which seed to start from (0-9)
     n_chains = 5
     n_workers = psutil.cpu_count(logical=False)-1
 
@@ -522,7 +556,7 @@ if __name__=='__main__':
     grounded_ice_mask = (bedmap_mask == 1)
     
     # initialize a large scale chain to be used as an example to initialize other large scale chain
-    largeScaleChain = MCMC.chain_crf(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
+    largeScaleChain = MCMC_test.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
     
     largeScaleChain.set_update_region(True,highvel_mask)
     
@@ -546,7 +580,7 @@ if __name__=='__main__':
     smoothness = V1_p[2]
     
     # initialize a RandField instance to be used for all large scale chains
-    rf1 = MCMC.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
+    rf1 = MCMC_test.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
     
     min_block_x = config.T3_xmin_block
     max_block_x = config.T3_xmax_block
@@ -581,8 +615,7 @@ if __name__=='__main__':
     initial_beds = []
 
     for i in range(n_chains):
-        # Sample name sgs_beds/sgs_1250680260_bindshadler_macayeal.txt
-        sgs_bed = np.loadtxt(f'./sgs_beds/sgs_{str(i)}_bindshadler_macayeal.txt')
+        sgs_bed = np.loadtxt(r'sgs_beds/sgs_'+str(i)+'_bindshadler_macayeal.txt')
         initial_beds.append(sgs_bed)
     #initial_beds = np.array([sgs_bed] * n_chains) # np.repeat(sgs_bed, n_chains)
 
@@ -603,6 +636,9 @@ if __name__=='__main__':
         ls_seed_folder = output_path / 'LargeScaleChain' / f'{str(ls_seed)[:6]}'
 
         ls_seed_folder.mkdir(parents=True, exist_ok=True)
+
+    """
+        ls_seed_folder.mkdir(parents=True, exist_ok=True)
         ss_chain_folder = ls_seed_folder / 'SmallScaleChain'
         ss_chain_folder.mkdir(parents=True, exist_ok=True)
 
@@ -613,8 +649,7 @@ if __name__=='__main__':
              ss_seed = rng_seeds[j]
              ss_seed_folder = ss_chain_folder / f'{str(ss_seed)[:6]}'
              ss_seed_folder.mkdir(parents=True, exist_ok=True)
-    
-    # Use the offset to select the appropriate seeds for the large scale chain
+    """
     selected_rng_seeds = rng_seeds[offset_idx:min(offset_idx + n_chains, len(rng_seeds[:-n_chains]))]
           
     n_iters = [n_iter]*n_chains
