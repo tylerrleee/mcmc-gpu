@@ -44,7 +44,11 @@ Hardware:
 - Dimensions: ~2000x2000 grid at 500m resolution.
 
 - Configuration: 50,000 iterations.
+
+## On a M2 Mac | CPU to CPU ; library diff
 ![mac_benmark](tests/viz/mcmc_benchmark_results.png)
+
+## On a 1070 Ti, I7-8700k ; hardware diff
 ![mcmc_benmark](tests/viz/cuda_cpu_bm.png)
 
 # Setting Up the Environment
