@@ -1,15 +1,18 @@
-# Adding GPU support for gstatsMCMC
-- This implementation adds GPU support for MCMC.py and Topography.py using PyTorch, allowing devices that has CUDA GPUs or Mac Sillicon Metal Performance Shaders (MPS) to perform a collection of highly optized compute. 
-- Previously, gstatsMCMC only performed numpy calculations, which were all on CPUs. Calculations like spectral synthesis, gradient and mass conservation residual were highly repetitive for n_iterations. 
-- Adding GPU support aims to handle calculations simultaneously, in parralel, in contrast to cPU's sequential processing. 
-- Instead of numpy arrays, Pytorch uses tensors: a similar data structure to ndarray but allows access to GPU cores and VRAM directly.
+# GPU Acceleration for gstatsMCMC
+This update introduces hardware-accelerated computation for MCMC.py and Topography.py. By migrating core calculations from NumPy to PyTorch, the package now leverages CUDA (NVIDIA GPUs) and MPS (Apple Silicon Metal Performance Shaders) for LargeScaleChain
+
+# Overview
+- Previously, gstatsMCMC relied on sequential CPU processing via NumPy. Operations such as spectral synthesis, gradient calculations, and mass conservation residuals are highly repetitive across thousands of MCMC iterations. This implementation shifts these bottlenecks to the GPU to take advantage of parallel processing.
+
+- Replaces NumPy ndarrays with PyTorch Tensors to enable direct access to GPU cores and VRAM.
+
+- Minimizes CPU-GPU synchronization (bottlenecks) by keeping intermediate calculations on-device.
 
 # Changes
 
 1. MCMC_gpu.py
-- Introduce ` class chain_crf_gpu` subclass that inherits `chain_crf` class from MCMC.py . All original methods are encapsulated in chain_crf_gpu as well
-- Adds Tensor + GPU support on top of existing CPU-based numpy class.
-- Call `chain_crf_gpu` when using a GPU
+- Introduce ` class chain_crf_gpu` subclass that inherits `chain_crf` class from MCMC.py . This preserves all original methods while overloading slow methods.
+- A `_set_torch_device()` method automatically detects the best available hardware, prioritizing cuda > mps > cpu.
 
 2. GPU/Pytorch Integration
 - All numerical arrays are converted from NumPy to PyTorch tensors via a new `_to_tensor()` method, targeting CUDA, MPS (Apple Silicon), or CPU automatically via _set_torch_device()
@@ -32,11 +35,64 @@ Hardware:
 - 8GB Memory
  
 1. Mass Conservation Residual Calculation `tests\test_mcr_dtypes.py`
-- Computing MCR on Pytorch Tensors on MPS outperforms Numpy Ndarrays exponentially once the NxN grid sizes grows (N = [50, 4000])
-- Tested resolution at a range of [50, 500], demonstrating the same results.
-![MCR_viz](images/screenshot.png)
+- Testing via tests/test_mcr_dtypes.py shows that as grid size ($N \times N$) increases, PyTorch on MPS significantly outperforms NumPy. While performance is comparable at small scales (N < 50), the GPU advantage grows substantially as $N$ approaches 4000.
+![MCR_viz](tests/viz/msr_torch.png)
 
 2. LargeScale Chain
-- Using Bindshadler & MacAyeal data at roughly shape (2000, 2000) and 500 resolution
-- 50000 iterations each
-![mcmc_benmark](images/screenshot.png)
+- Dataset: Bindschadler & MacAyeal Ice Stream data.
+
+- Dimensions: ~2000x2000 grid at 500m resolution.
+
+- Configuration: 50,000 iterations.
+![mcmc_benmark](tests/viz/mcmc_benchmark_results.png)
+
+# Setting Up the Environment
+1. Create and Activate Virtual Environment
+```
+# Create the environment
+python -m venv .venv
+
+# Activate (Windows)
+.venv\Scripts\activate
+# Activate (Mac/Linux)
+source .venv/bin/activate
+```
+2. Install Dependencies
+```
+# CUDA GPUs
+## Benefiticial to Google your compatible CUDA version and PyTorch version 
+## change Torch version in requirements or .yml if it does not work for you
+
+# Remaining requirements
+pip install -r requirements
+```
+
+3. Test Single Chain
+```
+python benchmark_mcmc.py `
+   --csv ../data/BindSchalder_Macayeal_IceStreams.csv ` # CHANGE THIS
+   --sgs_bed ../sgs_beds/sgs_0_bindshadler_macayeal.txt ` # CHANGE THIS
+   --n_iter 50000 `
+# Read benchmark_mcmc.py for cmd instructions
+```
+
+4. Test Multiprocessing/Chains
+```
+# Change data paths before running
+python largeScaleChain_multiprocessing.py
+```
+
+# Hardware verification
+
+```
+import torch
+device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+print(f"gstatsMCMC will run on: {device.upper()}")
+```
+
+# Future Considerations
+
+- Create a subclass for SmallScaleChain for PyTorch support
+- Subclassing all new GPU related methods to avoid CPU-GPU synchronization, or Tensor to Numpy conversions
+
+  
