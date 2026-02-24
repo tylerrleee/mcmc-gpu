@@ -129,11 +129,11 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     result (tuple): A tuple containing the results of the run
 
     '''
-    '''
+    
     torch.set_num_threads(1)
     os.environ['OMP_NUM_THREADS'] = '1'
     os.environ['MKL_NUM_THREADS'] = '1'
-    '''
+    
     # Suppress initialization prints from workers
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
@@ -462,7 +462,7 @@ def msc_run_wrapper(param_chain, param_run):
 if __name__=='__main__':
     # Set file paths here
     #NOTE use r string literals in case backslashes are used
-    glacier_data_path = Path(r'data/BindSchalder_Macayeal_IceStreams.csv') 
+    glacier_data_path = Path(r'./data/BindSchadler_Macayeal_IceStreams.csv') 
     sgs_bed_path = Path(r'sgs_beds/sgs_0_bindshadler_macayeal.txt')
     data_weight_path = Path(r'data/data_weight.txt')
     seed_file_path = Path(r'data/200_seeds.txt')
@@ -556,7 +556,7 @@ if __name__=='__main__':
     grounded_ice_mask = (bedmap_mask == 1)
     
     # initialize a large scale chain to be used as an example to initialize other large scale chain
-    largeScaleChain = MCMC_test.chain_crf(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
+    largeScaleChain = MCMC_test.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
     
     largeScaleChain.set_update_region(True,highvel_mask)
     
