@@ -317,7 +317,7 @@ class chain_crf_gpu(chain_crf):
         
         loss_prev, loss_prev_mc, loss_prev_data = self._loss_tensor(mc_res, mc_region_bool, sigma_denom)
 
-        loss_prev_float = float(loss_prev)
+        #loss_prev_float = float(loss_prev)
         loss_cache_t[0]      = loss_prev
         loss_mc_cache_t[0]   = loss_prev_mc
         loss_data_cache_t[0] = loss_prev_data
@@ -445,7 +445,7 @@ class chain_crf_gpu(chain_crf):
 
 
             # Compute loss
-            loss_next_val, loss_next_mc, loss_next_data = self._loss_tensor(mc_res, mc_region_bool, sigma_denom)
+            loss_next_val, loss_next_mc, loss_next_data = self._loss_tensor(mc_res_candidate, mc_region_bool, sigma_denom)
             loss_next = float(loss_next_val)
             block_thickness   = self.surf[bxmin:bxmax, bymin:bymax] - bed_next[bxmin:bxmax, bymin:bymax]
             
@@ -463,7 +463,7 @@ class chain_crf_gpu(chain_crf):
                 acceptance_rate = 1.0
             else:
                 #delta = loss_prev - loss_next        
-                acceptance_rate = min(1.0, math.exp(loss_prev_float - loss_next))
+                acceptance_rate = min(1.0, math.exp(loss_prev - loss_next))
 
             u = rng.random()                          # Python float from numpy RNG
             if u <= acceptance_rate:
@@ -480,8 +480,10 @@ class chain_crf_gpu(chain_crf):
                 loss_data_cache_t[i] = loss_next_data
                 step_cache_t[i]      = True
 
-                # Increment resampled-times counter for accepted block cells
-                resampled_times_t[bxmin:bxmax, bymin:bymax] += block_region_mask
+                if self.update_in_region:
+                    resampled_times_t[bxmin:bxmax,bymin:bymax] += self.region_mask[bxmin:bxmax,bymin:bymax]
+                else:
+                    resampled_times_t[bxmin:bxmax,bymin:bymax] += self.grounded_ice_mask[bxmin:bxmax,bymin:bymax]
 
                 accepted_count += 1
             else:
