@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 sys.path.append('..')
 #from gstatsMCMC.gpu import MCMC_gpu, Topography_gpu
-from gstatsMCMC import MCMC_test
+from gstatsMCMC import MCMC_gpu
 
 
 from gstatsMCMC import MCMC, Topography
@@ -240,7 +240,7 @@ def run_gpu(args, data, initial_bed, highvel_mask):
     print(f"\n[GPU] PyTorch device: {dev_name}")
 
     print("[GPU] Setting up chain_crf …")
-    chain = MCMC_test.chain_crf_gpu(
+    chain = MCMC_gpu.chain_crf_gpu(
         data["xx"], data["yy"],
         initial_bed,
         data["bedmap_surf"], data["velx"], data["vely"],
@@ -256,7 +256,7 @@ def run_gpu(args, data, initial_bed, highvel_mask):
     chain.set_random_generator(rng_seed=args.rng_seed)
 
     # RandField
-    rf = MCMC_test.RandField(
+    rf = MCMC_gpu.RandField(
         args.range_min_x, args.range_max_x,
         args.range_min_y, args.range_max_y,
         args.scale_min, args.scale_max,
