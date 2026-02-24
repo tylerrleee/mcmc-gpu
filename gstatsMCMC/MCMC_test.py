@@ -407,9 +407,8 @@ class chain_crf_gpu(chain_crf):
             else:
                 perturb = f_t[mxmin:mxmax, mymin:mymax]
 
-            saved_bed  = bed_c[bxmin:bxmax, bymin:bymax].clone()
-            bed_c[bxmin:bxmax, bymin:bymax] += perturb
-            #bed_next[bxmin:bxmax, bymin:bymax] = bed_c[bxmin:bxmax, bymin:bymax] + perturb
+            bed_next = bed_c.clone()
+            bed_next[bxmin:bxmax,bymin:bymax]=bed_next[bxmin:bxmax,bymin:bymax] + perturb
 
             # Restrict update to region / grounded ice mask
             if self.update_in_region:
@@ -437,10 +436,13 @@ class chain_crf_gpu(chain_crf):
             )
 
             # Patch only the block region of the global residual tensor
-            saved_res  = mc_res[bxmin:bxmax, bymin:bymax].clone()
-            vx0 = bxmin - c_xmin;  vx1 = vx0 + (bxmax - bxmin)
-            vy0 = bymin - c_ymin;  vy1 = vy0 + (bymax - bymin)
-            saved_res[bxmin:bxmax, bymin:bymax] = local_mc_res[vx0:vx1, vy0:vy1]
+            mc_res_candidate = mc_res.clone()
+            valid_x_start = bxmin - c_xmin
+            valid_x_end = valid_x_start + (bxmax - bxmin)
+            valid_y_start = bymin - c_ymin
+            valid_y_end = valid_y_start + (bymax - bymin)
+            mc_res_candidate[bxmin:bxmax, bymin:bymax] = local_mc_res[valid_x_start:valid_x_end, valid_y_start:valid_y_end]
+
 
             # Compute loss
             loss_next_val, loss_next_mc, loss_next_data = self._loss_tensor(mc_res, mc_region_bool, sigma_denom)
@@ -466,8 +468,8 @@ class chain_crf_gpu(chain_crf):
             u = rng.random()                          # Python float from numpy RNG
             if u <= acceptance_rate:
                 # Accept
-                bed_c[bxmin:bxmax, bymin:bymax]  = saved_bed
-                mc_res[bxmin:bxmax, bymin:bymax] = saved_res
+                bed_c[bxmin:bxmax, bymin:bymax]  = bed_next[bxmin:bxmax, bymin:bymax]
+                mc_res = mc_res_candidate
 
                 loss_prev      = loss_next
                 loss_prev_mc   = loss_next_mc

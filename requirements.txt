@@ -21,7 +21,7 @@ cartopy
 pillow
 gstatsim
 matplotlib-scalebar
-torch
+torch==2.6.0
 torchvision
 
 ipykernel

@@ -1,11 +1,17 @@
 """
+MAc:
 python benchmark_mcmc.py \
   --csv ./data/BindSchalder_Macayeal_IceStreams.csv \
   --sgs_bed ./sgs_beds/sgs_0_bindshadler_macayeal.txt \
   --data_weight ./data/data_weight.txt \
   --n_iter 50000 \
   --skip_cpu \
-
+W:
+python benchmark_mcmc.py `
+   --csv ./data/BindSchalder_Macayeal_IceStreams.csv `
+   --sgs_bed ./sgs_beds/sgs_0_bindshadler_macayeal.txt `
+   --data_weight ./data/data_weight.txt `
+   --n_iter 50000 --skip_cpu
 """
 
 import argparse
@@ -288,7 +294,7 @@ def run_gpu(args, data, initial_bed, highvel_mask):
     last_bed, loss_mc, loss_data, loss_total, steps, resampled, blocks = result[:7]
 
     # Compute final mass-conservation residual on the returned bed
-    mc_res_final = Topography.get_mass_conservation_residual_tensor(
+    mc_res_final = Topography.get_mass_conservation_residual(
         last_bed,
         data["bedmap_surf"], data["velx"], data["vely"],
         data["dhdt"], data["smb"], args.resolution,
