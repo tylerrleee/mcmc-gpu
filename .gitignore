@@ -15,3 +15,4 @@ visualization.ipynb
 test.ipynb
 test2.py
 .gitignore
+config.py
