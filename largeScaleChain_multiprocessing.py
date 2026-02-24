@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from gstatsMCMC import Topography
 from gstatsMCMC import MCMC
-from gstatsMCMC import MCMC_test
+from gstatsMCMC import MCMC_gpu
 
 import torch
 from sklearn.preprocessing import QuantileTransformer
@@ -138,8 +138,8 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC_test.init_lsc_chain_by_instance(param_chain)
-    rf1   = MCMC_test.initiate_RF_by_instance(param_rf)
+    chain = MCMC_gpu.init_lsc_chain_by_instance(param_chain)
+    rf1   = MCMC_gpu.initiate_RF_by_instance(param_rf)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -348,7 +348,7 @@ def msc_run_wrapper(param_chain, param_run):
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC_test.init_msc_chain_by_instance(param_chain)
+    chain = MCMC_gpu.init_msc_chain_by_instance(param_chain)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -556,7 +556,7 @@ if __name__=='__main__':
     grounded_ice_mask = (bedmap_mask == 1)
     
     # initialize a large scale chain to be used as an example to initialize other large scale chain
-    largeScaleChain = MCMC_test.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
+    largeScaleChain = MCMC_gpu.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
     
     largeScaleChain.set_update_region(True,highvel_mask)
     
@@ -580,7 +580,7 @@ if __name__=='__main__':
     smoothness = V1_p[2]
     
     # initialize a RandField instance to be used for all large scale chains
-    rf1 = MCMC_test.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
+    rf1 = MCMC_gpu.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
     
     min_block_x = config.T3_xmin_block
     max_block_x = config.T3_xmax_block
