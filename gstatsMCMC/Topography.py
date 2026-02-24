@@ -18,7 +18,7 @@ import csv
 import gstatsim as gs
 from PIL import Image, ImageFilter
 from .Utilities import _interpolate
-    
+import torch
 
 """load surface mass balance data from the smb data from https://doi.org/10.5194/tc-12-1479-2018 and https://www.projects.science.uu.nl/iceclimate/publications/data/2018/vwessem2018_tc/RACMO_Yearly/
 
@@ -598,6 +598,18 @@ def get_mass_conservation_residual(bed, surf, velx, vely, dhdt, smb, resolution)
     res = dx + dy + dhdt - smb
     
     return res
+
+def get_mass_conservation_residual_tensor(bed: torch.Tensor, surf: torch.Tensor, velx: torch.Tensor, vely: torch.Tensor, dhdt: torch.Tensor, smb: torch.Tensor, resolution: torch.Tensor):    
+    """ Accepts only Torch.Tensor"""
+    thick = surf - bed
+
+    # torch.gradient returns a list; axis 1 = x (columns), axis 0 = y (rows)
+    # spacing argument corresponds to the physical resolution
+    (dx_t,) = torch.gradient(velx * thick, spacing=(float(resolution),), dim=1)
+    (dy_t,) = torch.gradient(vely * thick, spacing=(float(resolution),), dim=0)
+
+    res_t: torch.Tensor = dx_t + dy_t + dhdt - smb
+    return res_t
 
 # TODO
 def filter_data_by_std(df_in, rf_bed, cond_bed, num_of_std, xx, yy, shallow, dfmaskname = 'bedmachine_mask'):

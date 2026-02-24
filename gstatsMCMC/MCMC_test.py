@@ -108,6 +108,43 @@ def spectral_synthesis_field_torch(RF, shape, res=1.0, device=None, dtype=torch.
 
     return field  # (ny, nx) tensor on device
 
+def get_rfblock(self):
+        """
+        Generate a random field block based on the information stored in the RandField object.
+        The block size is randomly selected from values defined in set_block_sizes() function. 
+        The random field has a logistic decay to the block's edges
+        
+        Returns:
+            f (2D numpy array): a random field sample shaped by logistic mask.
+        """
+        
+        res = self.resolution
+        
+        # randomly choose a size from the list
+        block_size_i = self.rng.integers(low=0, high=self.pairs.shape[1], size=1)[0]
+        block_size = self.pairs[:,block_size_i]
+        
+        #generate field
+        x_uniq = np.arange(0,block_size[0]*res,res)
+        y_uniq = np.arange(0,block_size[1]*res,res)
+
+        #in-case of a weird bug
+        while True:
+            ## TODO: have to modify this for n>1
+            #f = self.get_random_field(x_uniq, y_uniq)
+            if self.spectral == True:
+                f = spectral_synthesis_field(self, (len(y_uniq), len(x_uniq)), res=self.resolution)
+            else:
+                f = self.get_random_field(x_uniq, y_uniq)
+                
+            #f = f[0,:,:]
+            if (np.sum(np.isnan(f))) != 0:
+                print('f have nan')
+                continue
+            else:
+                break
+            
+        return f*self.edge_masks[block_size_i]
 
 class chain_crf_gpu(chain_crf):
     def __init_func__(self):
