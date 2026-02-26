@@ -1,10 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 from gstatsMCMC import Topography
-from gstatsMCMC import MCMC
-from gstatsMCMC import MCMC_gpu
-
-import torch
+from gstatsMCMC import MCMC_gpu as MCMC
+import gstatsim as gs
 from sklearn.preprocessing import QuantileTransformer
 import skgstat as skg
 from copy import deepcopy
@@ -13,24 +12,12 @@ import multiprocessing as mp
 from pathlib import Path
 import os
 import sys
+import scipy as sp
 import json
 import psutil
+import torch
 import config
 
-def _chain_dict_to_numpy(d: dict) -> dict:
-    """
-    Normalise all torch.Tensor values in a chain __dict__ snapshot back to
-    numpy arrays before pickling for multiprocessing. This ensures
-    init_lsc_chain_by_instance always receives numpy inputs regardless of
-    whether run() was previously called on the template chain.
-    """
-    out = {}
-    for k, v in d.items():
-        if isinstance(v, torch.Tensor):
-            out[k] = v.detach().cpu().numpy()
-        else:
-            out[k] = v
-    return out
 
 def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_seeds,n_iters,output_path='./Data/output'):
     '''
@@ -51,12 +38,14 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     -------
     result: a list of results from all the chains runned.
 
-    '''                     
+    '''
     # Clear the console for the progress bars
     os.system('cls' if os.name == 'nt' else 'clear')
-    tic = time.time()
     
+    tic = time.time()
+
     ctx = mp.get_context('spawn')
+
     params = []
 
     # Retrive parameters from the existing chain / RandField
@@ -64,11 +53,11 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     example_RF = rf.__dict__
 
    # Modify some of the parameters based on the input rng_seeds, initial_beds, and n_iters
-    for i in range(n_chains):           
-        chain_param = _chain_dict_to_numpy(deepcopy(example_chain))
+    for i in range(n_chains):   
+        chain_param = deepcopy(example_chain)
         chain_param['rng_seed'] = rng_seeds[i]
         chain_param['initial_bed'] = initial_beds[i]
-
+        
         RF_param = deepcopy(example_RF)
         RF_param['rng_seed'] = rng_seeds[i]
 
@@ -86,7 +75,8 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
         params.append([chain_param,RF_param,deepcopy(run_param)])
 
     # Print header and reserve space for progress bars
-    print('Running MCMC chains...')
+    device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    print(f'Running MCMC chains on {device}...')
     print('\n' * (n_chains + 1))
     sys.stdout.flush() # Force output into the terminal
     
@@ -97,22 +87,21 @@ def largeScaleChain_mp(n_chains,n_workers,largeScaleChain,rf,initial_beds,rng_se
     # Print completed output
     print('\n' * 3)
     print(r'''
-                _o                  _                 _o_   o   o
-            o    (^)  _             (o)    >')         (^)  (^) (^)
-        _ (^) ('>~ _(v)_      _   //-\\   /V\      ('> ~ __.~   ~
-        ('v')~ // \\  /-\      (.)-=_\_/)   (_)>     (V)  ~  ~~ /__ /\
-        //-=-\\ (\_/) (\_/)      V \ _)>~    ~~      <(__\[     ](__=_')
-        (\_=_/)  ^ ^   ^ ^       ~  ~~                ~~~~        ~~~~~
-        _^^_^^   __  ..-.___..---I~~~:_  .__...--.._.;-'I~~~~-.____...;-
-        |~|~~~~~| ~~|  _   |    |  _| ~~|  |  |  |  |_ |      | _ |  |
-        _.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~-~
-            ''')
+           _o                  _                 _o_   o   o
+      o    (^)  _             (o)    >')         (^)  (^) (^)
+   _ (^) ('>~ _(v)_      _   //-\\   /V\      ('> ~ __.~   ~
+ ('v')~ // \\  /-\      (.)-=_\_/)   (_)>     (V)  ~  ~~ /__ /\
+//-=-\\ (\_/) (\_/)      V \ _)>~    ~~      <(__\[     ](__=_')
+(\_=_/)  ^ ^   ^ ^       ~  ~~                ~~~~        ~~~~~
+_^^_^^   __  ..-.___..---I~~~:_  .__...--.._.;-'I~~~~-.____...;-
+ |~|~~~~~| ~~|  _   |    |  _| ~~|  |  |  |  |_ |      | _ |  |
+_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~~_.-~-~._.-~~._.-~-~_.-~~_.-~-~
+    ''')
 
     toc = time.time()
     print(f'Completed in {toc-tic:.2f} seconds')
     
     return result
-
 
 def lsc_run_wrapper(param_chain, param_rf, param_run):
     '''
@@ -129,17 +118,13 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     result (tuple): A tuple containing the results of the run
 
     '''
-    
-    torch.set_num_threads(1)
-    os.environ['OMP_NUM_THREADS'] = '1'
-    os.environ['MKL_NUM_THREADS'] = '1'
-    
+
     # Suppress initialization prints from workers
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC_gpu.init_lsc_chain_by_instance(param_chain)
-    rf1   = MCMC_gpu.initiate_RF_by_instance(param_rf)
+    chain = MCMC.init_lsc_chain_by_instance(param_chain)
+    rf1 = MCMC.initiate_RF_by_instance(param_rf)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -174,10 +159,10 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
         
         # Load the most recent bed file
         most_recent_bed = np.load(seed_folder / f'bed_{iter_count}k.npy')
-
+        
         # Update the chain's initial bed
         chain.initial_bed = most_recent_bed
-
+        
         # Load all previous result files
         with np.load(seed_folder / f'results_{iter_count}k.npz') as results_data:
             previous_results = {
@@ -188,11 +173,12 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
                 'resampled_times' : results_data['resampled_times'],
                 'blocks_used' : results_data['blocks_used']
             }
-
+        
         # Mark files for deletion
         files_to_delete = [
             seed_folder / f'results_{iter_count}k.npz',
-            seed_folder / 'current_iter.txt' ]
+            seed_folder / 'current_iter.txt'
+        ]
         
         with open(seed_folder / 'RNGState_RandField.txt', "r") as file: 
             rf1.rng.bit_generator.state = json.load(file)
@@ -202,7 +188,7 @@ def lsc_run_wrapper(param_chain, param_rf, param_run):
     # Store positioning info
     chain.chain_id = param_run.get('chain_id', 'Unknown')
     chain.tqdm_position = param_run.get('tqdm_position', 0)
-    #chain.seed = param_run.get('seed', 'Unknown')
+    chain.seed = param_run.get('seed', 'Unknown')
 
     # Run the chain
     result = chain.run(
@@ -309,7 +295,8 @@ def smallScaleChain_mp(n_chains, n_workers, smallScaleChain, initial_beds, ssc_r
         params.append([deepcopy(chain_param), deepcopy(run_param)])
 
     # Print header and reserve space for progress bars
-    print('Running MCMC chains...')
+    device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    print(f'Running MCMC chains on {device}...')
     print('\n' * (n_chains + 1))
     sys.stdout.flush() # force output into the terminal
 
@@ -317,6 +304,7 @@ def smallScaleChain_mp(n_chains, n_workers, smallScaleChain, initial_beds, ssc_r
     with mp.Pool(n_workers) as pool:
         result = pool.starmap(msc_run_wrapper, params)
 
+    # Print final output
     print('\n' * 3)
     print(r'''
            _o                  _                 _o_   o   o
@@ -356,7 +344,7 @@ def msc_run_wrapper(param_chain, param_run):
     old_stdout = sys.stdout
     sys.stdout = open(os.devnull, 'w')
 
-    chain = MCMC_gpu.init_msc_chain_by_instance(param_chain)
+    chain = MCMC.init_msc_chain_by_instance(param_chain)
 
     # Restore stdout after initialization
     sys.stdout.close()
@@ -408,6 +396,7 @@ def msc_run_wrapper(param_chain, param_run):
         files_to_delete = [
             seed_folder / f'results_{iter_count}k.npz',
             seed_folder / 'current_iter.txt'
+        ]
         
         with open(seed_folder / 'RNGState_chain.txt', "r") as file: 
             chain.rng.bit_generator.state = json.load(file)
@@ -457,7 +446,7 @@ def msc_run_wrapper(param_chain, param_run):
         steps=steps,
         resampled_times=resampled_times,
         blocks_used=blocks_used
-    
+    )
 
     # Delete old files after successfully saving new ones
     for file_path in files_to_delete:
@@ -470,20 +459,20 @@ if __name__=='__main__':
     # Set file paths here
     #NOTE use r string literals in case backslashes are used
     glacier_data_path = Path(r'./data/BindSchadler_Macayeal_IceStreams.csv') 
-    sgs_bed_path = Path(r'sgs_beds/sgs_0_bindshadler_macayeal.txt')
-    data_weight_path = Path(r'data/data_weight.txt')
-    seed_file_path = Path(r'data/200_seeds.txt')
-    output_path = Path(r'data/bindshadler_macayeal/')
+    sgs_bed_path = Path(r'./sgs_beds/sgs_0_bindshadler_macayeal.txt')
+    data_weight_path = Path(r'./data/data_weight.txt')
+    seed_file_path = Path(r'./data/200_seeds.txt')
+    output_path = Path(r'./data/bindshadler_macayeal/')
+
 
     # Multiprocessing params
-    n_iter = 2000000
+    n_iter = 50000
     offset_idx = 0 # Which seed to start from (0-9)
     n_chains = 5
     n_workers = psutil.cpu_count(logical=False)-1
 
     # load compiled bed elevation measurements
     df = pd.read_csv(glacier_data_path)
-    print(f'Shape of Glacier data: {df.shape}')
     
     rng_seed = 0
     
@@ -500,6 +489,7 @@ if __name__=='__main__':
     rows = len(y_uniq)
     
     resolution = config.resolution
+
     
     xx, yy = np.meshgrid(x_uniq, y_uniq)
     
@@ -539,8 +529,8 @@ if __name__=='__main__':
     coords = df_sampled[['x','y']].values
     values = df_sampled['Nbed']
 
-    maxlag = 90000      # maximum range distance
-    n_lags = 50         # num of bins (try decreasing if this is taking too long)
+    maxlag = 80000      # maximum range distance
+    n_lags = 60         # num of bins (try decreasing if this is taking too long)
 
     # compute variogram
     V1 = skg.Variogram(coords, values, bin_func='even', 
@@ -563,15 +553,14 @@ if __name__=='__main__':
     grounded_ice_mask = (bedmap_mask == 1)
     
     # initialize a large scale chain to be used as an example to initialize other large scale chain
-    largeScaleChain = MCMC_gpu.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
+    largeScaleChain = MCMC.chain_crf_gpu(xx, yy, sgs_bed, bedmap_surf, velx, vely, dhdt, smb, cond_bed, data_mask, grounded_ice_mask, resolution)
     
     largeScaleChain.set_update_region(True,highvel_mask)
     
     mc_res_bm = Topography.get_mass_conservation_residual(bedmachine_bed,bedmap_surf,velx,vely,dhdt,smb,resolution)
     
     # in multiprocessing, we choose to only use mass flux residual loss in squared sum (Gaussian distribution)
-    largeScaleChain.set_loss_type(sigma_mc = config.sigma3
-                                  , massConvInRegion=True)
+    largeScaleChain.set_loss_type(sigma_mc=config.sigma3, massConvInRegion=True)
     
     #range_max and range_min changes topographies features' lateral scale
     #by default, I set range_max to variogram range
@@ -587,12 +576,13 @@ if __name__=='__main__':
     smoothness = V1_p[2]
     
     # initialize a RandField instance to be used for all large scale chains
-    rf1 = MCMC_gpu.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
+    rf1 = MCMC.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
     
     min_block_x = config.T3_xmin_block
     max_block_x = config.T3_xmax_block
     min_block_y = config.T3_ymin_block
     max_block_y = config.T3_ymax_block
+
     rf1.set_block_sizes(min_block_x, max_block_x, min_block_y, max_block_y)
     
     logis_func_L = 2
@@ -620,44 +610,39 @@ if __name__=='__main__':
     largeScaleChain.set_random_generator(rng_seed = rng_seed)
     
     initial_beds = []
-
     for i in range(n_chains):
         sgs_bed = np.loadtxt(r'sgs_beds/sgs_'+str(i)+'_bindshadler_macayeal.txt')
         initial_beds.append(sgs_bed)
     #initial_beds = np.array([sgs_bed] * n_chains) # np.repeat(sgs_bed, n_chains)
-
-
+    
     with open(Path(seed_file_path), 'r') as f:
         lines = f.readlines()
     
     rng_seeds = []
     for line in lines:
         rng_seeds.append(int(line.strip()))
-    
-
+        
     # Create output directory for all results
-    
     for i in range(0, n_chains):
         #print(i, rng_seeds[i])
         ls_seed = rng_seeds[i]
         ls_seed_folder = output_path / 'LargeScaleChain' / f'{str(ls_seed)[:6]}'
-
         ls_seed_folder.mkdir(parents=True, exist_ok=True)
 
-    """
-        ls_seed_folder.mkdir(parents=True, exist_ok=True)
-        ss_chain_folder = ls_seed_folder / 'SmallScaleChain'
-        ss_chain_folder.mkdir(parents=True, exist_ok=True)
-
-
-        # For each large scale chain, create 20 small scale chain folders
-        for j in range(i*20, i*20 + 20):
-             #print('\t', j,  rng_seeds[j])
-             ss_seed = rng_seeds[j]
-             ss_seed_folder = ss_chain_folder / f'{str(ss_seed)[:6]}'
-             ss_seed_folder.mkdir(parents=True, exist_ok=True)
-    """
-     selected_rng_seeds = rng_seeds[offset_idx:min(offset_idx + n_chains, len(rng_seeds[:-n_chains]))]
+# =============================================================================
+#         ss_chain_folder = ls_seed_folder / 'SmallScaleChain'
+#         ss_chain_folder.mkdir(parents=True, exist_ok=True)
+# 
+#         # For each large scale chain, create 20 small scale chain folders
+#         for j in range(i*20, i*20 + 20):
+#             #print('\t', j,  rng_seeds[j])
+#             ss_seed = rng_seeds[j]
+#             ss_seed_folder = ss_chain_folder / f'{str(ss_seed)[:6]}'
+#             ss_seed_folder.mkdir(parents=True, exist_ok=True)
+# =============================================================================
+    
+    # Use the offset to select the appropriate seeds for the large scale chain
+    selected_rng_seeds = rng_seeds[offset_idx:min(offset_idx + n_chains, len(rng_seeds[:-n_chains]))]
 
     iteration_batches = []  
     if n_iter < 100000:
