@@ -1,4 +1,4 @@
-name: gstatsMCMCnew
+name: gstatsMCMC
 channels:
   - conda-forge
 dependencies:

@@ -438,10 +438,14 @@ def msc_run_wrapper(param_chain, param_run):
 if __name__=='__main__':
     # Set file paths here
     #NOTE use r string literals in case backslashes are used
-
+    glacier_data_path = Path(r'./data/griddedData/Support_Force.csv')
+    sgs_bed_path = Path(r'./sgs_beds/SupportForce_0.txt')
+    data_weight_path = Path(r'./data/Support_Force/data_weight_supportForce.txt')
+    seed_file_path = Path(r'./data/200_seeds.txt')
+    output_path = Path(r'./data/Support_Force/')
 
     # Multiprocessing params
-    n_iter = 5000
+    n_iter = 200000
     offset_idx = 0 # Which seed to start from (0-9)
     n_chains = 10
     n_workers = psutil.cpu_count(logical=False)-1
@@ -495,7 +499,7 @@ if __name__=='__main__':
     df['Nbed'] = transformed_data
     
     # randomly drop out 50% of coordinates. Decrease this value if you have a lot of data and it takes a long time to run
-    df_sampled = df.sample(frac=0.5, random_state=rng_seed)
+    df_sampled = df.sample(frac=0.90, random_state=rng_seed)
     df_sampled = df_sampled[df_sampled["cond_bed"].isnull() == False]
     df_sampled = df_sampled[df_sampled["bedmap_mask"]==1]
     
@@ -534,7 +538,7 @@ if __name__=='__main__':
     mc_res_bm = Topography.get_mass_conservation_residual(bedmachine_bed,bedmap_surf,velx,vely,dhdt,smb,resolution)
     
     # in multiprocessing, we choose to only use mass flux residual loss in squared sum (Gaussian distribution)
-    largeScaleChain.set_loss_type(sigma_mc=5, massConvInRegion=True)
+    largeScaleChain.set_loss_type(sigma_mc=1.50, massConvInRegion=True)
     
     #range_max and range_min changes topographies features' lateral scale
     #by default, I set range_max to variogram range
@@ -552,10 +556,10 @@ if __name__=='__main__':
     # initialize a RandField instance to be used for all large scale chains
     rf1 = MCMC.RandField(range_min_x, range_max_x, range_min_y, range_max_y, scale_min, scale_max, nugget_max, random_field_model, isotropic, smoothness = smoothness)
     
-    min_block_x = 50
-    max_block_x = 80
-    min_block_y = 50
-    max_block_y = 80
+    min_block_x = 20
+    max_block_x = 45
+    min_block_y = 20
+    max_block_y = 45
     rf1.set_block_sizes(min_block_x, max_block_x, min_block_y, max_block_y)
     
     logis_func_L = 2
@@ -584,8 +588,7 @@ if __name__=='__main__':
     
     initial_beds = []
     for i in range(n_chains):
-        #sgs_bed = np.loadtxt('Denman_sgs_bed_'+str(i)+'.txt')
-        sgs_bed = np.loadtxt('sgs_bed_denman.txt')
+        sgs_bed = np.loadtxt('./sgs_beds/SupportForce_'+str(i)+'.txt')
         initial_beds.append(sgs_bed)
     #initial_beds = np.array([sgs_bed] * n_chains) # np.repeat(sgs_bed, n_chains)
     
