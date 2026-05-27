@@ -29,11 +29,10 @@ class SGS_MCMC:
                  yy, 
                  variogram, 
                  radius = 100e3, 
-                 num_points = 32,
+                 num_points = 20,
                  ktype = 'ok',  # Ordinary krigging
                  seed = None, 
-                 max_memory_gb = 150.0,
-                 batch_size=None, 
+                 batch_size = 1, 
                  dtype = cp.float32, 
                  quiet = False, 
                  sigma = 1.5):
@@ -60,9 +59,14 @@ class SGS_MCMC:
         self.num_points = num_points
         self.ktype = ktype
         self.dtype = dtype
-        self.max_memory_gb = max_memory_gb
         self.quiet = quiet
         self.sigma = sigma
+        
+        # Use 80% of available GPU CUDA memory 
+        free_mem, _ = cp.cuda.runtime.memGetInfo()
+        avail_mem = free_mem * 0.80
+        self.max_memory_gb = avail_mem
+        
         
         # Index meshgrids
         xx_rows = cp.arange(xx.shape[0])
@@ -77,7 +81,7 @@ class SGS_MCMC:
  
         # Stencil — depends only on xx spacing and radius 
         self.stencil = gsim.neighbors_gpu.make_circle_stencil_gpu_safe(
-            xx[0, :], radius, max_memory_gb
+            xx[0, :], radius, self.max_memory_gb
         )
         
         # Batch size tuning 
@@ -90,7 +94,7 @@ class SGS_MCMC:
                 + num_points ** 2 * bytes_per
                 + num_points * 128
             )
-            avail_mem = max_memory_gb * (1024 ** 3) * 0.8
+            avail_mem = self.max_memory_gb * (1024 ** 3) * 0.8
             calc_batch = int(avail_mem // mem_per_point)
             self.batch_size = max(4096, min(calc_batch, 200_000))
             if not quiet:
